@@ -3,272 +3,1960 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نقابة تكنولوجيا المعلومات - تسجيل الدخول</title>
+    <title>نقابة تكنولوجيا المعلومات - النظام المتكامل</title>
     
-    <!-- رابط الأيقونات الصحيح -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Tahoma', Arial, sans-serif;
+            font-family: 'Cairo', sans-serif;
         }
 
         body {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* خلفية متحركة */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 1.5s ease-in-out infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.5); opacity: 1; }
+        }
+
+        /* شاشة الدخول */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 50px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            transform: translateY(30px);
+            opacity: 0;
+            animation: slideUp 0.8s ease forwards;
+            border: 2px solid rgba(255,215,0,0.3);
+        }
+
+        @keyframes slideUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* الحاوية الرئيسية */
+        .app-container {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: flex;
+            display: none;
+        }
+
+        /* الشريط الجانبي */
+        .sidebar {
+            width: 320px;
+            background: rgba(26, 32, 44, 0.98);
+            backdrop-filter: blur(10px);
+            color: white;
+            padding: 30px 20px;
+            position: fixed;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            overflow-y: auto;
+            box-shadow: -5px 0 30px rgba(0,0,0,0.5);
+            z-index: 100;
+            border-left: 2px solid #ffd700;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+        }
+
+        /* البروفايل */
+        .profile-card {
+            text-align: center;
+            padding: 25px;
+            background: linear-gradient(135deg, #2d3748, #1a1f2c);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            border: 2px solid #ffd700;
+            position: relative;
+            animation: glow 2s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 20px #ffd700; }
+            50% { box-shadow: 0 0 40px #ffd700; }
+        }
+
+        .online-badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #00ff00;
+            color: black;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .profile-image {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 15px;
+            border-radius: 50%;
+            border: 4px solid #ffd700;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .profile-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .profile-image i {
+            font-size: 60px;
+            color: white;
+            line-height: 120px;
+        }
+
+        .profile-image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 5px;
+            font-size: 12px;
+            transform: translateY(100%);
+            transition: transform 0.3s;
+        }
+
+        .profile-image:hover .profile-image-overlay {
+            transform: translateY(0);
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: 900;
+            color: #ffd700;
+        }
+
+        .profile-title {
+            font-size: 16px;
+            background: #4a5568;
+            display: inline-block;
+            padding: 5px 20px;
+            border-radius: 20px;
+            margin: 10px 0;
+        }
+
+        .profile-badge {
+            font-size: 14px;
+            color: #ffd700;
+            padding: 5px;
+            background: #2d3748;
+            border-radius: 10px;
+        }
+
+        /* القائمة */
+        .menu-item {
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: #ffd70020;
+            transform: translateX(-5px);
+        }
+
+        .menu-item i {
+            width: 30px;
+            font-size: 20px;
+            color: #ffd700;
+        }
+
+        .badge {
+            background: #ffd700;
+            color: #1a1f2c;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-right: auto;
+        }
+
+        /* المحتوى الرئيسي */
+        .main-content {
+            flex: 1;
+            margin-right: 320px;
+            padding: 30px;
+            transition: all 0.3s;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                margin-right: 0;
+                padding: 15px;
+            }
+        }
+
+        /* الشريط العلوي */
+        .top-bar {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            border: 1px solid #ffd700;
+        }
+
+        .menu-toggle {
+            display: none;
+            background: #ffd700;
+            color: #1a1f2c;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo-area img {
+            height: 50px;
+            width: auto;
+            cursor: pointer;
+        }
+
+        /* الأقسام */
+        .section {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            color: white;
+            border: 1px solid #ffd700;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #ffd700;
+        }
+
+        .section-header h2 {
+            font-size: 24px;
+            color: #ffd700;
+        }
+
+        /* البطاقات */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid #ffd700;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .stat-card:hover {
+            background: #ffd70020;
+            transform: translateY(-5px) scale(1.02);
+        }
+
+        .stat-icon {
+            width: 70px;
+            height: 70px;
+            background: #ffd700;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-icon i {
+            font-size: 35px;
+            color: #1a1f2c;
+        }
+
+        .stat-info h3 {
+            font-size: 14px;
+            color: #aaa;
+            margin-bottom: 5px;
+        }
+
+        .stat-info .number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #ffd700;
+        }
+
+        /* الجداول */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: white;
+        }
+
+        th {
+            text-align: right;
+            padding: 15px;
+            background: #ffd70020;
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #ffd70030;
+        }
+
+        tr {
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        tr:hover {
+            background: #ffd70010;
+        }
+
+        /* الأزرار */
+        .btn {
+            background: #ffd700;
+            color: #1a1f2c;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px #ffd70040;
+        }
+
+        .btn-danger {
+            background: #ff4444;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            box-shadow: 0 10px 25px #ff444480;
+        }
+
+        /* النوافذ المنبثقة */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
             justify-content: center;
             align-items: center;
         }
 
-        .login-container {
-            background: white;
+        .modal.active {
+            display: flex;
+            animation: modalFade 0.3s ease;
+        }
+
+        @keyframes modalFade {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-content {
+            background: #2d3748;
+            border-radius: 25px;
             padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
             width: 90%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        h1 {
-            color: #1e3c72;
-            margin-bottom: 10px;
-            font-size: 24px;
-        }
-
-        h2 {
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 16px;
-            font-weight: normal;
-        }
-
-        .input-group {
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            color: white;
+            border: 2px solid #ffd700;
             position: relative;
-            margin-bottom: 20px;
-            text-align: right;
         }
 
-        .input-group i {
+        .close-modal {
             position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #1e3c72;
-            font-size: 18px;
+            top: 20px;
+            left: 20px;
+            font-size: 30px;
+            cursor: pointer;
+            color: #ffd700;
+            transition: all 0.3s;
         }
 
-        .input-group input {
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+
+        /* النماذج */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ffd700;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
             width: 100%;
-            padding: 15px 45px 15px 15px;
-            border: 2px solid #e0e0e0;
+            padding: 12px;
+            background: #1a1f2c;
+            border: 2px solid #ffd70030;
             border-radius: 10px;
             font-size: 16px;
-            transition: 0.3s;
+            color: white;
+            transition: all 0.3s;
         }
 
-        .input-group input:focus {
-            border-color: #1e3c72;
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: #ffd700;
             outline: none;
         }
 
-        button {
-            width: 100%;
-            padding: 15px;
-            background: #1e3c72;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.3s;
-            margin-top: 10px;
+        /* بطاقات الشبكة */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
         }
 
-        button:hover {
-            background: #2a5298;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(30,60,114,0.4);
-        }
-
-        .demo-accounts {
-            margin-top: 30px;
-            text-align: right;
-            background: #f5f5f5;
+        .entity-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
             padding: 20px;
+            border: 1px solid #ffd700;
+            transition: all 0.3s;
+        }
+
+        .entity-card:hover {
+            transform: translateY(-5px);
+            background: #ffd70020;
+        }
+
+        .entity-card h3 {
+            color: #ffd700;
+            margin-bottom: 10px;
+        }
+
+        /* علامات الحالة */
+        .status-badge {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .status-online {
+            background: #00ff0020;
+            color: #00ff00;
+        }
+
+        .status-offline {
+            background: #80808020;
+            color: #808080;
+        }
+
+        .status-pending {
+            background: #ffaa0020;
+            color: #ffaa00;
+        }
+
+        .status-approved {
+            background: #00ff0020;
+            color: #00ff00;
+        }
+
+        /* التبويبات */
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background: #1a1f2c;
             border-radius: 10px;
-        }
-
-        .demo-accounts h3 {
-            color: #1e3c72;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .demo-accounts ul {
-            list-style: none;
-        }
-
-        .demo-accounts li {
-            padding: 8px 0;
-            color: #555;
-            font-size: 13px;
-            border-bottom: 1px solid #ddd;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s;
         }
 
-        .demo-accounts li:hover {
-            color: #1e3c72;
-            padding-right: 10px;
+        .tab:hover {
+            background: #ffd70020;
         }
 
-        .demo-accounts li i {
-            margin-left: 10px;
-            color: #1e3c72;
+        .tab.active {
+            background: #ffd700;
+            color: #1a1f2c;
         }
 
-        .error-message {
-            color: red;
+        /* إعدادات الثيم */
+        .theme-colors {
+            display: flex;
+            gap: 10px;
             margin-top: 10px;
-            font-size: 14px;
+        }
+
+        .theme-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .theme-color:hover {
+            transform: scale(1.1);
+        }
+
+        .theme-color.active {
+            border-color: white;
         }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <i class="fas fa-code-branch" style="font-size: 60px; color: #1e3c72; margin-bottom: 20px;"></i>
-        <h1>نقابة تكنولوجيا المعلومات</h1>
-        <h2>المنصة الإدارية المتكاملة</h2>
-        
-        <div class="input-group">
-            <i class="fas fa-envelope"></i>
-            <input type="email" id="email" placeholder="البريد الإلكتروني" value="boss@nokaba.com">
+    <!-- خلفية متحركة -->
+    <div class="stars" id="stars"></div>
+
+    <!-- شاشة الدخول -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-card">
+            <div style="text-align: center; margin-bottom: 30px;">
+                <i class="fas fa-code-branch" style="font-size: 80px; color: #667eea;"></i>
+                <h1 style="color: #333; margin-top: 20px;">نقابة تكنولوجيا المعلومات</h1>
+                <p style="color: #666;">المنصة الإدارية المتكاملة</p>
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-envelope"></i> البريد الإلكتروني</label>
+                <input type="email" id="loginEmail" placeholder="أدخل بريدك الإلكتروني" value="boss@nokaba.com">
+            </div>
+
+            <div class="form-group">
+                <label><i class="fas fa-lock"></i> كلمة المرور</label>
+                <input type="password" id="loginPassword" placeholder="أدخل كلمة المرور" value="123456">
+            </div>
+
+            <button class="btn" style="width: 100%;" onclick="handleLogin()">
+                <i class="fas fa-sign-in-alt"></i> دخول
+            </button>
+
+            <div style="margin-top: 30px; background: #f5f5f5; padding: 20px; border-radius: 10px;">
+                <h3 style="color: #333; margin-bottom: 15px;">حسابات تجريبية:</h3>
+                <div style="display: grid; gap: 10px;">
+                    <div onclick="fillLogin('boss@nokaba.com', '123456')" style="cursor: pointer; padding: 10px; background: #e3f2fd; border-radius: 5px;">
+                        <i class="fas fa-crown" style="color: #667eea;"></i> النقيب: boss@nokaba.com
+                    </div>
+                    <div onclick="fillLogin('vp@nokaba.com', '123456')" style="cursor: pointer; padding: 10px; background: #e8f5e8; border-radius: 5px;">
+                        <i class="fas fa-user-tie" style="color: #4caf50;"></i> النائب: vp@nokaba.com
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="input-group">
-            <i class="fas fa-lock"></i>
-            <input type="password" id="password" placeholder="كلمة المرور" value="123456">
+    </div>
+
+    <!-- التطبيق الرئيسي -->
+    <div class="app-container" id="appContainer">
+        <!-- الشريط الجانبي -->
+        <div class="sidebar" id="sidebar">
+            <div class="profile-card">
+                <div class="online-badge" id="onlineStatus">
+                    <i class="fas fa-circle"></i> متصل
+                </div>
+                
+                <div class="profile-image" onclick="document.getElementById('profileImageInput').click()">
+                    <img id="profileImagePreview" src="" style="display: none;">
+                    <i class="fas fa-user-circle" id="profileIcon"></i>
+                    <div class="profile-image-overlay">
+                        <i class="fas fa-camera"></i> تغيير
+                    </div>
+                </div>
+                <input type="file" id="profileImageInput" accept="image/*" style="display: none;" onchange="updateProfileImage(this)">
+                
+                <div class="profile-name" id="sidebarName"></div>
+                <div class="profile-title" id="sidebarRole"></div>
+                <div class="profile-badge" id="sidebarBadge"></div>
+            </div>
+
+            <div id="dynamicMenu"></div>
         </div>
-        
-        <button onclick="login()">
-            <i class="fas fa-sign-in-alt"></i> دخول
-        </button>
-        
-        <div class="demo-accounts">
-            <h3><i class="fas fa-users"></i> حسابات تجريبية</h3>
-            <ul>
-                <li onclick="fillLogin('boss@nokaba.com', '123456')">
-                    <i class="fas fa-crown"></i> النقيب العام: boss@nokaba.com / 123456
-                </li>
-                <li onclick="fillLogin('vp@nokaba.com', '123456')">
-                    <i class="fas fa-user-tie"></i> النائب الأول: vp@nokaba.com / 123456
-                </li>
-                <li onclick="fillLogin('head.committee@nokaba.com', '123456')">
-                    <i class="fas fa-users-cog"></i> رئيس اللجان: head.committee@nokaba.com / 123456
-                </li>
-                <li onclick="fillLogin('committee.leader@nokaba.com', '123456')">
-                    <i class="fas fa-user"></i> رئيس لجنة: committee.leader@nokaba.com / 123456
-                </li>
-            </ul>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+            <div class="top-bar">
+                <button class="menu-toggle" onclick="toggleSidebar()">
+                    <i class="fas fa-bars"></i>
+                </button>
+                
+                <div class="logo-area" id="logoArea">
+                    <img id="logoImage" src="" style="display: none;">
+                    <span id="logoText"><i class="fas fa-code-branch"></i> نقابة التقنية</span>
+                </div>
+                
+                <div class="date-time" id="currentDateTime"></div>
+            </div>
+
+            <!-- لوحة التحكم -->
+            <div id="dashboardSection" class="section active">
+                <div class="section-header">
+                    <h2>لوحة التحكم</h2>
+                </div>
+
+                <div class="stats-grid" id="statsGrid"></div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px;">
+                        <h3 style="color: #ffd700; margin-bottom: 15px;">آخر النشاطات</h3>
+                        <div id="recentActivities"></div>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px;">
+                        <h3 style="color: #ffd700; margin-bottom: 15px;">المتصلون الآن</h3>
+                        <div id="onlineUsersList"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- إدارة الأعضاء -->
+            <div id="membersSection" class="section">
+                <div class="section-header">
+                    <h2>إدارة الأعضاء</h2>
+                    <button class="btn" onclick="openModal('memberModal')">
+                        <i class="fas fa-plus"></i> عضو جديد
+                    </button>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="filterMembers('all')">الكل</div>
+                    <div class="tab" onclick="filterMembers('member')">أعضاء</div>
+                    <div class="tab" onclick="filterMembers('non-member')">غير أعضاء</div>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم العضوية</th>
+                                <th>الصورة</th>
+                                <th>الاسم</th>
+                                <th>المنصب</th>
+                                <th>النوع</th>
+                                <th>الحالة</th>
+                                <th>آخر ظهور</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="membersList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- المراسلات -->
+            <div id="messagesSection" class="section">
+                <div class="section-header">
+                    <h2>المراسلات</h2>
+                    <button class="btn" onclick="openModal('messageModal')">
+                        <i class="fas fa-plus"></i> مراسلة جديدة
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم المعاملة</th>
+                                <th>من</th>
+                                <th>إلى</th>
+                                <th>الموضوع</th>
+                                <th>التاريخ</th>
+                                <th>الحالة</th>
+                                <th>الاعتماد</th>
+                            </tr>
+                        </thead>
+                        <tbody id="messagesList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- اللجان -->
+            <div id="committeesSection" class="section">
+                <div class="section-header">
+                    <h2>اللجان</h2>
+                    <button class="btn" onclick="openModal('committeeModal')">
+                        <i class="fas fa-plus"></i> لجنة جديدة
+                    </button>
+                </div>
+
+                <div class="grid-3" id="committeesGrid"></div>
+            </div>
+
+            <!-- الفروع -->
+            <div id="branchesSection" class="section">
+                <div class="section-header">
+                    <h2>الفروع</h2>
+                    <button class="btn" onclick="openModal('branchModal')">
+                        <i class="fas fa-plus"></i> فرع جديد
+                    </button>
+                </div>
+
+                <div class="grid-3" id="branchesGrid"></div>
+            </div>
+
+            <!-- التقارير -->
+            <div id="reportsSection" class="section">
+                <div class="section-header">
+                    <h2>التقارير والإحصائيات</h2>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="stat-info">
+                            <h3>نسبة النشاط</h3>
+                            <div class="number" id="activityRate">0%</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>نسبة الاعتماد</h3>
+                            <div class="number" id="approvalRate">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-top: 20px;">
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">إحصائيات المراسلات</h3>
+                    <div id="messagesStats"></div>
+                </div>
+            </div>
+
+            <!-- الإعدادات الشخصية -->
+            <div id="profileSettingsSection" class="section">
+                <div class="section-header">
+                    <h2>الإعدادات الشخصية</h2>
+                </div>
+
+                <form onsubmit="event.preventDefault(); saveProfileSettings();">
+                    <div class="form-group">
+                        <label>الاسم</label>
+                        <input type="text" id="profileName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>البريد الإلكتروني</label>
+                        <input type="email" id="profileEmail" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>كلمة المرور الجديدة</label>
+                        <input type="password" id="newPassword" placeholder="اترك فارغاً إذا لم ترد التغيير">
+                    </div>
+
+                    <div class="form-group">
+                        <label>تأكيد كلمة المرور</label>
+                        <input type="password" id="confirmPassword">
+                    </div>
+
+                    <div class="form-group">
+                        <label>المنصب</label>
+                        <input type="text" id="profileTitle" required>
+                    </div>
+
+                    <button type="submit" class="btn" style="width: 100%;">حفظ التغييرات</button>
+                </form>
+            </div>
+
+            <!-- إعدادات النظام (للنقيب فقط) -->
+            <div id="systemSettingsSection" class="section">
+                <div class="section-header">
+                    <h2>إعدادات النظام</h2>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">شعار النقابة</h3>
+                    <div class="form-group">
+                        <label>تغيير الشعار</label>
+                        <input type="file" id="systemLogoInput" accept="image/*" onchange="updateSystemLogo(this)">
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">ألوان النظام</h3>
+                    <div class="theme-colors">
+                        <div class="theme-color" style="background: #667eea;" onclick="changeTheme('#667eea', '#764ba2')"></div>
+                        <div class="theme-color" style="background: #ff6b6b;" onclick="changeTheme('#ff6b6b', '#ee5a24')"></div>
+                        <div class="theme-color" style="background: #1dd1a1;" onclick="changeTheme('#1dd1a1', '#10ac84')"></div>
+                        <div class="theme-color" style="background: #f39c12;" onclick="changeTheme('#f39c12', '#e67e22')"></div>
+                    </div>
+                </div>
+
+                <div style="background: rgba(255,255,255,0.1); border-radius: 15px; padding: 20px;">
+                    <h3 style="color: #ffd700; margin-bottom: 15px;">إعدادات الترقيم</h3>
+                    <div class="form-group">
+                        <label>بدء أرقام العضوية من</label>
+                        <input type="number" id="memberStartNumber" value="1">
+                    </div>
+                    <button class="btn" onclick="saveSystemSettings()">حفظ الإعدادات</button>
+                </div>
+            </div>
         </div>
-        
-        <div id="errorMessage" class="error-message"></div>
+    </div>
+
+    <!-- مودال عضو جديد -->
+    <div id="memberModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('memberModal')">&times;</span>
+            <h2 style="margin-bottom: 30px;">تسجيل عضو جديد</h2>
+            
+            <div class="form-group">
+                <label>الصورة الشخصية</label>
+                <input type="file" id="memberImage" accept="image/*">
+            </div>
+
+            <div class="form-group">
+                <label>الاسم الكامل</label>
+                <input type="text" id="memberName" required>
+            </div>
+
+            <div class="form-group">
+                <label>البريد الإلكتروني</label>
+                <input type="email" id="memberEmail" required>
+            </div>
+
+            <div class="form-group">
+                <label>كلمة المرور</label>
+                <input type="text" id="memberPassword" value="123456" required>
+            </div>
+
+            <div class="form-group">
+                <label>رقم العضوية</label>
+                <input type="text" id="memberNumber" placeholder="سيتم توليده تلقائياً">
+            </div>
+
+            <div class="form-group">
+                <label>المنصب</label>
+                <select id="memberRole" onchange="toggleMemberEntity()">
+                    <option value="عضو">عضو</option>
+                    <option value="رئيس_لجنة">رئيس لجنة</option>
+                    <option value="رئيس_فرع">رئيس فرع</option>
+                    <option value="رئيس_اللجان">رئيس اللجان</option>
+                    <option value="رئيس_الفروع">رئيس الفروع</option>
+                    <option value="النائب_الاول">النائب الأول</option>
+                    <option value="النقيب">النقيب</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>نوع العضوية</label>
+                <select id="memberType">
+                    <option value="member">عضو</option>
+                    <option value="non-member">غير عضو</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="memberEntityGroup" style="display: none;">
+                <label>الجهة</label>
+                <select id="memberEntity"></select>
+            </div>
+
+            <button class="btn" style="width: 100%;" onclick="addMember()">تسجيل العضو</button>
+        </div>
+    </div>
+
+    <!-- مودال مراسلة جديدة -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('messageModal')">&times;</span>
+            <h2 style="margin-bottom: 30px;">مراسلة جديدة</h2>
+            
+            <div class="form-group">
+                <label>إلى</label>
+                <select id="messageTo" required></select>
+            </div>
+
+            <div class="form-group">
+                <label>الموضوع</label>
+                <input type="text" id="messageSubject" required>
+            </div>
+
+            <div class="form-group">
+                <label>المحتوى</label>
+                <textarea id="messageContent" rows="5" required></textarea>
+            </div>
+
+            <button class="btn" style="width: 100%;" onclick="sendMessage()">إرسال</button>
+        </div>
+    </div>
+
+    <!-- مودال لجنة جديدة -->
+    <div id="committeeModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('committeeModal')">&times;</span>
+            <h2 style="margin-bottom: 30px;">إضافة لجنة جديدة</h2>
+            
+            <div class="form-group">
+                <label>اسم اللجنة</label>
+                <input type="text" id="committeeName" required>
+            </div>
+
+            <div class="form-group">
+                <label>رئيس اللجنة</label>
+                <select id="committeeHead"></select>
+            </div>
+
+            <button class="btn" style="width: 100%;" onclick="addCommittee()">إضافة</button>
+        </div>
+    </div>
+
+    <!-- مودال فرع جديد -->
+    <div id="branchModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('branchModal')">&times;</span>
+            <h2 style="margin-bottom: 30px;">إضافة فرع جديد</h2>
+            
+            <div class="form-group">
+                <label>اسم الفرع</label>
+                <input type="text" id="branchName" required>
+            </div>
+
+            <div class="form-group">
+                <label>رئيس الفرع</label>
+                <select id="branchHead"></select>
+            </div>
+
+            <button class="btn" style="width: 100%;" onclick="addBranch()">إضافة</button>
+        </div>
     </div>
 
     <script>
-        // قاعدة بيانات تجريبية
-        const users = [
-            {
-                id: 1,
-                name: 'أحمد النقيب',
-                email: 'boss@nokaba.com',
-                password: '123456',
-                role: 'النقيب',
-                title: 'النقيب العام',
-                memberId: '1',
-                image: null
+        // ==================== تهيئة النظام ====================
+        let systemData = {
+            members: [],
+            messages: [],
+            committees: [],
+            branches: [],
+            sessions: [],
+            settings: {
+                memberStartNumber: 1,
+                lastMemberId: 0,
+                primaryColor: '#667eea',
+                secondaryColor: '#764ba2',
+                logo: null
             },
-            {
-                id: 2,
-                name: 'محمد النائب',
-                email: 'vp@nokaba.com',
-                password: '123456',
-                role: 'النائب_الاول',
-                title: 'النائب الأول',
-                memberId: '2',
-                image: null
-            },
-            {
-                id: 3,
-                name: 'سارة رئيس اللجان',
-                email: 'head.committee@nokaba.com',
-                password: '123456',
-                role: 'رئيس_اللجان',
-                title: 'رئيس اللجان',
-                memberId: '3',
-                image: null
-            },
-            {
-                id: 4,
-                name: 'خالد رئيس لجنة',
-                email: 'committee.leader@nokaba.com',
-                password: '123456',
-                role: 'رئيس_لجنة',
-                title: 'رئيس لجنة التقنية',
-                memberId: '4',
-                image: null
-            }
-        ];
+            currentUser: null
+        };
 
-        // دالة تسجيل الدخول
-        function login() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+        // تحميل البيانات
+        function loadData() {
+            const saved = localStorage.getItem('nokabaSystemPro');
+            if (saved) {
+                try {
+                    systemData = JSON.parse(saved);
+                } catch (e) {}
+            }
             
-            const user = users.find(u => u.email === email && u.password === password);
+            // التأكد من وجود المصفوفات
+            systemData.members = systemData.members || [];
+            systemData.messages = systemData.messages || [];
+            systemData.committees = systemData.committees || [];
+            systemData.branches = systemData.branches || [];
+            systemData.sessions = systemData.sessions || [];
+            systemData.settings = systemData.settings || { 
+                memberStartNumber: 1, 
+                lastMemberId: 0,
+                primaryColor: '#667eea',
+                secondaryColor: '#764ba2',
+                logo: null
+            };
+            
+            // إنشاء حساب النقيب إذا لم يكن موجوداً
+            if (!systemData.members.find(m => m.role === 'النقيب')) {
+                systemData.members.push({
+                    id: 'ng-1',
+                    memberId: '1',
+                    name: 'أحمد النقيب',
+                    email: 'boss@nokaba.com',
+                    password: '123456',
+                    role: 'النقيب',
+                    title: 'النقيب العام',
+                    type: 'member',
+                    image: null,
+                    entity: null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: new Date().toISOString(),
+                    lastLogout: null,
+                    online: true
+                });
+                
+                systemData.members.push({
+                    id: 'vp-1',
+                    memberId: '2',
+                    name: 'محمد النائب',
+                    email: 'vp@nokaba.com',
+                    password: '123456',
+                    role: 'النائب_الاول',
+                    title: 'النائب الأول',
+                    type: 'member',
+                    image: null,
+                    entity: null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    lastLogout: null,
+                    online: false
+                });
+            }
+        }
+
+        // حفظ البيانات
+        function saveData() {
+            localStorage.setItem('nokabaSystemPro', JSON.stringify(systemData));
+        }
+
+        // ==================== شاشة الدخول ====================
+        function handleLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            
+            const user = systemData.members.find(m => m.email === email && m.password === password);
             
             if (user) {
-                // حفظ بيانات المستخدم في localStorage
-                localStorage.setItem('currentUser', JSON.stringify(user));
+                systemData.currentUser = user;
+                user.online = true;
+                user.lastLogin = new Date().toISOString();
                 
-                // تسجيل وقت الدخول
-                const sessions = JSON.parse(localStorage.getItem('sessions') || '[]');
-                sessions.push({
+                systemData.sessions.push({
                     userId: user.id,
                     loginTime: new Date().toISOString(),
                     userName: user.name,
                     userRole: user.role
                 });
-                localStorage.setItem('sessions', JSON.stringify(sessions));
                 
-                // توجيه حسب الصلاحية
-                window.location.href = 'dashboard.html';
+                saveData();
+                
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'flex';
+                
+                updateUI();
+                loadStats();
+                loadMembers();
+                loadMessages();
+                loadCommittees();
+                loadBranches();
+                loadOnlineUsers();
             } else {
-                document.getElementById('errorMessage').innerText = '❌ البريد الإلكتروني أو كلمة المرور غير صحيحة';
+                alert('❌ البريد الإلكتروني أو كلمة المرور غير صحيحة');
             }
         }
 
-        // دالة تعبئة بيانات الدخول تلقائياً
         function fillLogin(email, password) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = password;
-            document.getElementById('errorMessage').innerText = '';
+            document.getElementById('loginEmail').value = email;
+            document.getElementById('loginPassword').value = password;
         }
 
-        // تحقق إذا كان في مستخدم مسجل بالفعل
-        window.onload = function() {
-            const currentUser = localStorage.getItem('currentUser');
-            if (currentUser) {
-                // إذا كان في مستخدم مسجل، روح للوحة التحكم مباشرة
-                window.location.href = 'dashboard.html';
+        // ==================== القائمة الديناميكية ====================
+        function renderMenu() {
+            const user = systemData.currentUser;
+            if (!user) return;
+            
+            let menu = '';
+            
+            // القائمة الأساسية للكل
+            menu += `
+                <div class="menu-item active" onclick="showSection('dashboardSection')">
+                    <i class="fas fa-chart-line"></i> لوحة التحكم
+                </div>
+                <div class="menu-item" onclick="showSection('messagesSection')">
+                    <i class="fas fa-envelope"></i> المراسلات
+                    <span class="badge" id="menuMessagesBadge">0</span>
+                </div>
+            `;
+            
+            // صلاحيات النقيب والنائب
+            if (user.role === 'النقيب' || user.role === 'النائب_الاول') {
+                menu += `
+                    <div class="menu-item" onclick="showSection('membersSection')">
+                        <i class="fas fa-users"></i> إدارة الأعضاء
+                    </div>
+                    <div class="menu-item" onclick="showSection('committeesSection')">
+                        <i class="fas fa-users-cog"></i> اللجان
+                    </div>
+                    <div class="menu-item" onclick="showSection('branchesSection')">
+                        <i class="fas fa-code-branch"></i> الفروع
+                    </div>
+                    <div class="menu-item" onclick="showSection('reportsSection')">
+                        <i class="fas fa-chart-pie"></i> التقارير
+                    </div>
+                `;
+            }
+            
+            // الإعدادات
+            menu += `
+                <div class="menu-item" onclick="showSection('profileSettingsSection')">
+                    <i class="fas fa-user-cog"></i> الإعدادات الشخصية
+                </div>
+            `;
+            
+            // إعدادات النظام للنقيب فقط
+            if (user.role === 'النقيب') {
+                menu += `
+                    <div class="menu-item" onclick="showSection('systemSettingsSection')">
+                        <i class="fas fa-cog"></i> إعدادات النظام
+                    </div>
+                `;
+            }
+            
+            // تسجيل الخروج
+            menu += `
+                <div class="menu-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i> تسجيل خروج
+                </div>
+            `;
+            
+            document.getElementById('dynamicMenu').innerHTML = menu;
+        }
+
+        // ==================== عرض الأقسام ====================
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            if (sectionId === 'membersSection') loadMembers();
+            if (sectionId === 'messagesSection') loadMessages();
+            if (sectionId === 'committeesSection') loadCommittees();
+            if (sectionId === 'branchesSection') loadBranches();
+            if (sectionId === 'reportsSection') loadReports();
+            if (sectionId === 'profileSettingsSection') loadProfileSettings();
+        }
+
+        // ==================== الإحصائيات ====================
+        function loadStats() {
+            const user = systemData.currentUser;
+            let stats = '';
+            
+            if (user.role === 'النقيب' || user.role === 'النائب_الاول') {
+                stats += `
+                    <div class="stat-card" onclick="showSection('membersSection')">
+                        <div class="stat-icon"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3>إجمالي الأعضاء</h3>
+                            <div class="number">${systemData.members.length}</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" onclick="showOnlineUsers()">
+                        <div class="stat-icon"><i class="fas fa-user-check"></i></div>
+                        <div class="stat-info">
+                            <h3>المتصلون الآن</h3>
+                            <div class="number">${systemData.members.filter(m => m.online).length}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            stats += `
+                <div class="stat-card" onclick="showSection('messagesSection')">
+                    <div class="stat-icon"><i class="fas fa-envelope"></i></div>
+                    <div class="stat-info">
+                        <h3>المراسلات</h3>
+                        <div class="number">${systemData.messages.length}</div>
+                    </div>
+                </div>
+                <div class="stat-card" onclick="showSection('reportsSection')">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-info">
+                        <h3>المعتمد</h3>
+                        <div class="number">${systemData.messages.filter(m => m.approved).length}</div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('statsGrid').innerHTML = stats;
+        }
+
+        // ==================== المتصلون الآن ====================
+        function loadOnlineUsers() {
+            const onlineUsers = systemData.members.filter(m => m.online);
+            let html = '';
+            
+            onlineUsers.forEach(user => {
+                html += `
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #ffd70030;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ffd700; display: flex; align-items: center; justify-content: center;">
+                            ${user.image ? `<img src="${user.image}" style="width: 100%; height: 100%; border-radius: 50%;">` : `<i class="fas fa-user" style="color: #1a1f2c;"></i>`}
+                        </div>
+                        <div>
+                            <div style="font-weight: bold;">${user.name}</div>
+                            <div style="font-size: 12px; color: #aaa;">${user.role}</div>
+                        </div>
+                        <div style="margin-right: auto;">
+                            <span class="status-badge status-online"><i class="fas fa-circle"></i> متصل</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('onlineUsersList').innerHTML = html || '<p style="color: #aaa;">لا يوجد متصلين حالياً</p>';
+        }
+
+        function showOnlineUsers() {
+            showSection('dashboardSection');
+            loadOnlineUsers();
+        }
+
+        // ==================== النشاطات الأخيرة ====================
+        function loadRecentActivities() {
+            const activities = systemData.sessions.slice(-5).reverse();
+            let html = '';
+            
+            activities.forEach(s => {
+                html += `
+                    <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border-bottom: 1px solid #ffd70030;">
+                        <i class="fas fa-circle" style="color: #00ff00; font-size: 10px;"></i>
+                        <div>
+                            <span style="font-weight: bold;">${s.userName}</span> قام بتسجيل الدخول
+                            <div style="font-size: 12px; color: #aaa;">${new Date(s.loginTime).toLocaleString('ar-EG')}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            document.getElementById('recentActivities').innerHTML = html || '<p style="color: #aaa;">لا توجد نشاطات حديثة</p>';
+        }
+
+        // ==================== إدارة الأعضاء ====================
+        function generateMemberId() {
+            const nextId = systemData.settings.lastMemberId + 1;
+            systemData.settings.lastMemberId = nextId;
+            saveData();
+            return nextId.toString();
+        }
+
+        function toggleMemberEntity() {
+            const role = document.getElementById('memberRole').value;
+            const group = document.getElementById('memberEntityGroup');
+            
+            if (role === 'رئيس_لجنة') {
+                group.style.display = 'block';
+                const select = document.getElementById('memberEntity');
+                select.innerHTML = '<option value="">اختر لجنة</option>';
+                systemData.committees.forEach(c => {
+                    select.innerHTML += `<option value="${c.id}">${c.name}</option>`;
+                });
+            } else if (role === 'رئيس_فرع') {
+                group.style.display = 'block';
+                const select = document.getElementById('memberEntity');
+                select.innerHTML = '<option value="">اختر فرع</option>';
+                systemData.branches.forEach(b => {
+                    select.innerHTML += `<option value="${b.id}">${b.name}</option>`;
+                });
+            } else {
+                group.style.display = 'none';
             }
         }
+
+        function addMember() {
+            const imageFile = document.getElementById('memberImage').files[0];
+            
+            const member = {
+                id: 'mem-' + Date.now(),
+                memberId: document.getElementById('memberNumber').value || generateMemberId(),
+                name: document.getElementById('memberName').value,
+                email: document.getElementById('memberEmail').value,
+                password: document.getElementById('memberPassword').value,
+                role: document.getElementById('memberRole').value,
+                type: document.getElementById('memberType').value,
+                title: document.getElementById('memberName').value,
+                image: null,
+                entity: document.getElementById('memberEntity')?.value || null,
+                createdAt: new Date().toISOString(),
+                lastLogin: null,
+                lastLogout: null,
+                online: false
+            };
+            
+            if (imageFile) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    member.image = e.target.result;
+                    systemData.members.push(member);
+                    saveData();
+                    closeModal('memberModal');
+                    loadMembers();
+                    loadStats();
+                    alert(`تم تسجيل العضو برقم عضوية: ${member.memberId}`);
+                };
+                reader.readAsDataURL(imageFile);
+            } else {
+                systemData.members.push(member);
+                saveData();
+                closeModal('memberModal');
+                loadMembers();
+                loadStats();
+                alert(`تم تسجيل العضو برقم عضوية: ${member.memberId}`);
+            }
+        }
+
+        function loadMembers() {
+            const tbody = document.getElementById('membersList');
+            if (!tbody) return;
+            
+            let html = '';
+            systemData.members.forEach(m => {
+                const lastSession = systemData.sessions.filter(s => s.userId === m.id).pop();
+                const lastSeen = lastSession ? 
+                    (m.online ? 'متصل الآن' : 
+                     (lastSession.logoutTime ? new Date(lastSession.logoutTime).toLocaleString('ar-EG') : new Date(lastSession.loginTime).toLocaleString('ar-EG'))) : 
+                    'لم يسجل';
+                
+                html += `
+                    <tr>
+                        <td>${m.memberId}</td>
+                        <td>
+                            <div style="width: 40px; height: 40px; border-radius: 50%; background: #ffd700; display: flex; align-items: center; justify-content: center;">
+                                ${m.image ? `<img src="${m.image}" style="width: 100%; height: 100%; border-radius: 50%;">` : `<i class="fas fa-user" style="color: #1a1f2c;"></i>`}
+                            </div>
+                        </td>
+                        <td>${m.name}</td>
+                        <td>${m.role}</td>
+                        <td>${m.type === 'member' ? 'عضو' : 'غير عضو'}</td>
+                        <td><span class="status-badge ${m.online ? 'status-online' : 'status-offline'}"><i class="fas fa-circle"></i> ${m.online ? 'متصل' : 'غير متصل'}</span></td>
+                        <td>${lastSeen}</td>
+                        <td>
+                            <i class="fas fa-edit" onclick="editMember('${m.id}')" style="color: #ffd700; cursor: pointer; margin-left: 10px;"></i>
+                            <i class="fas fa-trash" onclick="deleteMember('${m.id}')" style="color: #ff4444; cursor: pointer;"></i>
+                        </td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+        }
+
+        function deleteMember(id) {
+            if (confirm('هل أنت متأكد من حذف هذا العضو؟')) {
+                systemData.members = systemData.members.filter(m => m.id !== id);
+                saveData();
+                loadMembers();
+                loadStats();
+            }
+        }
+
+        // ==================== إدارة المراسلات ====================
+        function populateMessageRecipients() {
+            const select = document.getElementById('messageTo');
+            select.innerHTML = '<option value="">اختر المستلم</option>';
+            
+            // إضافة الجهات حسب الصلاحيات
+            const recipients = [
+                { id: 'رئيس_اللجان', name: 'رئيس اللجان' },
+                { id: 'رئيس_الفروع', name: 'رئيس الفروع' },
+                { id: 'النائب_الاول', name: 'النائب الأول' },
+                { id: 'النقيب', name: 'النقيب' }
+            ];
+            
+            recipients.forEach(r => {
+                select.innerHTML += `<option value="${r.id}">${r.name}</option>`;
+            });
+            
+            // إضافة رؤساء اللجان
+            systemData.committees.forEach(c => {
+                if (c.head) {
+                    const head = systemData.members.find(m => m.id === c.head);
+                    if (head) {
+                        select.innerHTML += `<option value="${head.id}">${head.name} (رئيس ${c.name})</option>`;
+                    }
+                }
+            });
+            
+            // إضافة رؤساء الفروع
+            systemData.branches.forEach(b => {
+                if (b.head) {
+                    const head = systemData.members.find(m => m.id === b.head);
+                    if (head) {
+                        select.innerHTML += `<option value="${head.id}">${head.name} (رئيس ${b.name})</option>`;
+                    }
+                }
+            });
+        }
+
+        function sendMessage() {
+            const message = {
+                id: 'msg-' + Date.now(),
+                trackingNumber: 'TR-' + Date.now(),
+                from: systemData.currentUser.id,
+                fromName: systemData.currentUser.name,
+                fromRole: systemData.currentUser.role,
+                to: document.getElementById('messageTo').value,
+                subject: document.getElementById('messageSubject').value,
+                content: document.getElementById('messageContent').value,
+                date: new Date().toISOString(),
+                status: 'pending',
+                approved: false,
+                approvalNumber: null,
+                history: [{
+                    action: 'created',
+                    by: systemData.currentUser.id,
+                    at: new Date().toISOString()
+                }]
+            };
+            
+            systemData.messages.push(message);
+            saveData();
+            
+            closeModal('messageModal');
+            loadMessages();
+            loadStats();
+            
+            alert(`تم الإرسال برقم: ${message.trackingNumber}`);
+        }
+
+        function loadMessages() {
+            const tbody = document.getElementById('messagesList');
+            if (!tbody) return;
+            
+            let messages = systemData.messages;
+            const user = systemData.currentUser;
+            
+            // تصفية حسب الصلاحيات
+            if (user.role !== 'النقيب' && user.role !== 'النائب_الاول') {
+                messages = messages.filter(m => 
+                    m.from === user.id || 
+                    m.to === user.id ||
+                    m.to === user.role
+                );
+            }
+            
+            let html = '';
+            messages.reverse().forEach(m => {
+                const fromUser = systemData.members.find(mem => mem.id === m.from);
+                
+                html += `
+                    <tr onclick="showMessageDetails('${m.id}')">
+                        <td>${m.trackingNumber}</td>
+                        <td>${fromUser?.name || m.fromName}</td>
+                        <td>${m.to}</td>
+                        <td>${m.subject}</td>
+                        <td>${new Date(m.date).toLocaleString('ar-EG')}</td>
+                        <td><span class="status-badge ${m.status === 'pending' ? 'status-pending' : 'status-approved'}">${m.status === 'pending' ? 'قيد الانتظار' : 'تمت'}</span></td>
+                        <td>${m.approved ? '✅' : '⏳'}</td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            document.getElementById('menuMessagesBadge').textContent = messages.filter(m => m.status === 'pending').length;
+        }
+
+        function showMessageDetails(messageId) {
+            const message = systemData.messages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            let historyHtml = '';
+            message.history.forEach(h => {
+                historyHtml += `<div>• ${h.action} - ${new Date(h.at).toLocaleString('ar-EG')}</div>`;
+            });
+            
+            let actions = '';
+            if (systemData.currentUser.role === 'النقيب' && !message.approved) {
+                actions = `<button class="btn" style="margin-top: 20px;" onclick="approveMessage('${messageId}')">✅ اعتماد المراسلة</button>`;
+            }
+            
+            alert(`
+                رقم المعاملة: ${message.trackingNumber}
+                من: ${message.fromName}
+                إلى: ${message.to}
+                الموضوع: ${message.subject}
+                المحتوى: ${message.content}
+                الحالة: ${message.approved ? 'معتمد' : 'قيد الانتظار'}
+                رقم القرار: ${message.approvalNumber || '—'}
+                
+                السجل:
+                ${historyHtml}
+            `);
+            
+            if (actions) {
+                if (confirm('اضغط OK لاعتماد هذه المراسلة')) {
+                    approveMessage(messageId);
+                }
+            }
+        }
+
+        function approveMessage(messageId) {
+            const message = systemData.messages.find(m => m.id === messageId);
+            if (message && !message.approved) {
+                message.approved = true;
+                message.status = 'approved';
+                message.approvalNumber = 'DEC-' + Date.now();
+                message.approvedBy = systemData.currentUser.id;
+                message.approvedAt = new Date().toISOString();
+                
+                saveData();
+                loadMessages();
+                alert(`تم الاعتماد برقم قرار: ${message.approvalNumber}`);
+            }
+        }
+
+        // ==================== إدارة اللجان ====================
+        function populateCommitteeHeads() {
+            const select = document.getElementById('committeeHead');
+            select.innerHTML = '<option value="">اختر رئيس</option>';
+            systemData.members
+                .filter(m => m.role === 'رئيس_لجنة' || m.role === 'عضو')
+                .forEach(m => {
+                    select.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+                });
+        }
+
+        function addCommittee() {
+            const committee = {
+                id: 'com-' + Date.now(),
+                name: document.getElementById('committeeName').value,
+                head: document.getElementById('committeeHead').value,
+                members: document.getElementById('committeeHead').value ? [document.getElementById('committeeHead').value] : [],
+                createdAt: new Date().toISOString()
+            };
+            
+            systemData.committees.push(committee);
+            
+            // تحديث رئيس اللجنة
+            if (committee.head) {
+                const headMember = systemData.members.find(m => m.id === committee.head);
+                if (headMember) {
+                    headMember.entity = committee.id;
+                    headMember.role = 'رئيس_لجنة';
+                }
+            }
+            
+            saveData();
+            closeModal('committeeModal');
+            loadCommittees();
+        }
+
+        function loadCommittees() {
+            const grid = document.getElementById('committeesGrid');
+            if (!grid) return;
+            
+            let html = '';
+            systemData.committees.forEach(c => {
+                const head = systemData.members.find(m => m.id === c.head);
+                html += `
+                    <div class="entity-card">
+                        <h3><i class="fas fa-users"></i> ${c.name}</h3>
+                        <p>رئيس: ${head?.name || 'غير معين'}</p>
+                        <p>عدد الأعضاء: ${c.members?.length || 0}</p>
+                        <small>${new Date(c.createdAt).toLocaleDateString('ar-EG')}</small>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html || '<p style="color: #aaa;">لا توجد لجان مضافة</p>';
+        }
+
+        // ==================== إدارة الفروع ====================
+        function populateBranchHeads() {
+            const select = document.getElementById('branchHead');
+            select.innerHTML = '<option value="">اختر رئيس</option>';
+            systemData.members
+                .filter(m => m.role === 'رئيس_فرع' || m.role === 'عضو')
+                .forEach(m => {
+                    select.innerHTML += `<option value="${m.id}">${m.name}</option>`;
+                });
+        }
+
+        function addBranch() {
+            const branch = {
+                id: 'br-' + Date.now(),
+                name: document.getElementById('branchName').value,
+                head: document.getElementById('branchHead').value,
+                members: document.getElementById('branchHead').value ? [document.getElementById('branchHead').value] : [],
+                createdAt: new Date().toISOString()
+            };
+            
+            systemData.branches.push(branch);
+            
+            // تحديث رئيس الفرع
+            if (branch.head) {
+                const headMember = systemData.members.find(m => m.id === branch.head);
+                if (headMember) {
+                    headMember.entity = branch.id;
+                    headMember.role = 'رئيس_فرع';
+                }
+            }
+            
+            saveData();
+            closeModal('branchModal');
+            loadBranches();
+        }
+
+        function loadBranches() {
+            const grid = document.getElementById('branchesGrid');
+            if (!grid) return;
+            
+            let html = '';
+            systemData.branches.forEach(b => {
+                const head = systemData.members.find(m => m.id === b.head);
+                html += `
+                    <div class="entity-card">
+                        <h3><i class="fas fa-code-branch"></i> ${b.name}</h3>
+                        <p>رئيس: ${head?.name || 'غير معين'}</p>
+                        <p>عدد الأعضاء: ${b.members?.length || 0}</p>
+                        <small>${new Date(b.createdAt).toLocaleDateString('ar-EG')}</small>
+                    </div>
+                `;
+            });
+            
+            grid.innerHTML = html || '<p style="color: #aaa;">لا توجد فروع مضافة</p>';
+        }
+
+        // ==================== التقارير ====================
+        function loadReports() {
+            const totalMessages = systemData.messages.length;
+            const approvedMessages = systemData.messages.filter(m => m.approved).length;
+            const pendingMessages = totalMessages - approvedMessages;
+            
+            document.getElementById('activityRate').textContent = 
+                ((systemData.members.filter(m => m.online).length / (systemData.members.length || 1)) * 100).toFixed(1) + '%';
+            
+            document.getElementById('approvalRate').textContent = 
+                totalMessages ? ((approvedMessages / totalMessages) * 100).toFixed(1) + '%' : '0%';
+            
+            document.getElementById('messagesStats').innerHTML = `
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 48px; color: #ffd700;">${totalMessages}</div>
+                        <div>إجمالي المراسلات</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 48px; color: #00ff00;">${approvedMessages}</div>
+                        <div>معتمدة</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 48px; color: #ffaa00;">${pendingMessages}</div>
+                        <div>قيد الانتظار</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 48px; color: #ffd700;">${systemData.sessions.length}</div>
+                        <div>جلسات اليوم</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ==================== الإعدادات الشخصية ====================
+        function loadProfileSettings() {
+            const user = systemData.currentUser;
+            document.getElementById('profileName').value = user.name || '';
+            document.getElementById('profileEmail').value = user.email || '';
+            document.getElementById('profileTitle').value = user.title || '';
+        }
+
+        function saveProfileSettings() {
+            const user = systemData.currentUser;
+            user.name = document.getElementById('profileName').value;
+            user.email = document.getElementById('profileEmail').value;
+            user.title = document.getElementById('profileTitle').value;
+            
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            
+            if (newPass) {
+                if (newPass === confirmPass) {
+                    user.password = newPass;
+                } else {
+                    alert('كلمة المرور غير متطابقة');
+                    return;
+                }
+            }
+            
+            saveData();
+            updateUI();
+            alert('تم حفظ التغييرات');
+        }
+
+        // ==================== الصور ====================
+        function updateProfileImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('profileImagePreview').src = e.target.result;
+                    document.getElementById('profileImagePreview').style.display = 'block';
+                    document.getElementById('profileIcon').style.display = 'none';
+                    
+                    if (systemData.currentUser) {
+                        systemData.currentUser.image = e.target.result;
+                        saveData();
+                    }
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function updateSystemLogo(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('logoImage').src = e.target.result;
+                    document.getElementById('logoImage').style.display = 'block';
+                    document.getElementById('logoText').style.display = 'none';
+                    
+                    systemData.settings.logo = e.target.result;
+                    saveData();
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // ==================== الثيم ====================
+        function changeTheme(primary, secondary) {
+            document.body.style.background = `linear-gradient(135deg, ${primary} 0%, ${secondary} 100%)`;
+            systemData.settings.primaryColor = primary;
+            systemData.settings.secondaryColor = secondary;
+            saveData();
+        }
+
+        // ==================== النوافذ المنبثقة ====================
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            
+            if (modalId === 'committeeModal') populateCommitteeHeads();
+            if (modalId === 'branchModal') populateBranchHeads();
+            if (modalId === 'messageModal') populateMessageRecipients();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // ==================== تحديث الواجهة ====================
+        function updateUI() {
+            const user = systemData.currentUser;
+            if (!user) return;
+            
+            document.getElementById('sidebarName').textContent = user.name;
+            document.getElementById('sidebarRole').textContent = user.role;
+            document.getElementById('sidebarBadge').textContent = `رقم العضوية: ${user.memberId}`;
+            
+            if (user.image) {
+                document.getElementById('profileImagePreview').src = user.image;
+                document.getElementById('profileImagePreview').style.display = 'block';
+                document.getElementById('profileIcon').style.display = 'none';
+            }
+            
+            if (systemData.settings.logo) {
+                document.getElementById('logoImage').src = systemData.settings.logo;
+                document.getElementById('logoImage').style.display = 'block';
+                document.getElementById('logoText').style.display = 'none';
+            }
+            
+            if (systemData.settings.primaryColor) {
+                document.body.style.background = `linear-gradient(135deg, ${systemData.settings.primaryColor} 0%, ${systemData.settings.secondaryColor} 100%)`;
+            }
+            
+            renderMenu();
+        }
+
+        // ==================== دوال عامة ====================
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function logout() {
+            if (systemData.currentUser) {
+                systemData.currentUser.online = false;
+                systemData.currentUser.lastLogout = new Date().toISOString();
+                
+                const session = systemData.sessions.find(s => 
+                    s.userId === systemData.currentUser.id && !s.logoutTime
+                );
+                if (session) {
+                    session.logoutTime = new Date().toISOString();
+                }
+                
+                saveData();
+            }
+            
+            document.getElementById('appContainer').style.display = 'none';
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
+
+        function filterMembers(type) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            loadMembers(); // هنضيف التصفية بعدين
+        }
+
+        // ==================== إنشاء النجوم ====================
+        function createStars() {
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 2 + 's';
+                document.getElementById('stars').appendChild(star);
+            }
+        }
+
+        // ==================== بدء التشغيل ====================
+        window.onload = function() {
+            createStars();
+            loadData();
+            
+            // التحقق من وجود مستخدم مسجل
+            if (systemData.currentUser) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'flex';
+                updateUI();
+                loadStats();
+                loadMembers();
+                loadMessages();
+                loadCommittees();
+                loadBranches();
+                loadOnlineUsers();
+                loadRecentActivities();
+            }
+            
+            // تحديث التاريخ والوقت
+            setInterval(() => {
+                document.getElementById('currentDateTime').innerHTML = new Date().toLocaleString('ar-EG');
+            }, 1000);
+        };
     </script>
 </body>
 </html>
