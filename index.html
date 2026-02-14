@@ -40,7 +40,7 @@
             transition: all 0.3s ease;
         }
 
-        /* خلفية متحركة ناعمة */
+        /* خلفية متحركة */
         .gradient-bg {
             position: fixed;
             top: 0;
@@ -71,10 +71,11 @@
             align-items: center;
             z-index: 1000;
             backdrop-filter: blur(10px);
+            background: rgba(0,0,0,0.3);
         }
 
         .login-card {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             border-radius: 20px;
             padding: 50px;
             width: 90%;
@@ -96,9 +97,10 @@
         }
 
         .login-logo img {
-            max-width: 120px;
-            max-height: 120px;
-            margin-bottom: 15px;
+            max-width: 150px;
+            max-height: 150px;
+            margin-bottom: 20px;
+            border-radius: 10px;
         }
 
         .login-logo h1 {
@@ -124,7 +126,7 @@
         /* الشريط الجانبي */
         .sidebar {
             width: 300px;
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(255, 255, 255, 0.98);
             backdrop-filter: blur(10px);
             color: var(--text);
             padding: 25px;
@@ -148,7 +150,7 @@
             }
         }
 
-        /* بروفايل أنيق */
+        /* بروفايل */
         .profile-card {
             text-align: center;
             padding: 25px;
@@ -300,7 +302,7 @@
 
         /* الشريط العلوي */
         .top-bar {
-            background: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.98);
             border-radius: 12px;
             padding: 15px 25px;
             margin-bottom: 25px;
@@ -336,11 +338,11 @@
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
         }
 
         .logo-area img {
-            height: 45px;
+            height: 60px;
             width: auto;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -351,7 +353,7 @@
         }
 
         .logo-area span {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
             color: var(--primary);
         }
@@ -366,7 +368,7 @@
 
         /* الأقسام */
         .section {
-            background: rgba(255,255,255,0.95);
+            background: rgba(255,255,255,0.98);
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 25px;
@@ -553,7 +555,7 @@
             border-radius: 15px;
             padding: 30px;
             width: 90%;
-            max-width: 550px;
+            max-width: 600px;
             max-height: 85vh;
             overflow-y: auto;
             position: relative;
@@ -677,6 +679,16 @@
             color: var(--danger);
         }
 
+        .status-in-progress {
+            background: rgba(52,152,219,0.1);
+            color: var(--accent);
+        }
+
+        .status-resolved {
+            background: rgba(46,204,113,0.1);
+            color: var(--success);
+        }
+
         /* التبويبات */
         .tabs {
             display: flex;
@@ -788,16 +800,6 @@
             color: var(--warning);
             transform: scale(1.1);
         }
-
-        /* ألوان متناسقة */
-        .bg-primary { background: var(--accent); }
-        .bg-success { background: var(--success); }
-        .bg-warning { background: var(--warning); }
-        .bg-danger { background: var(--danger); }
-        .text-primary { color: var(--accent); }
-        .text-success { color: var(--success); }
-        .text-warning { color: var(--warning); }
-        .text-danger { color: var(--danger); }
     </style>
 </head>
 <body>
@@ -891,7 +893,7 @@
                 </div>
             </div>
 
-            <!-- إدارة الأعضاء (للمدير فقط) -->
+            <!-- إدارة الأعضاء (للنقيب فقط) -->
             <div id="membersSection" class="section">
                 <div class="section-header">
                     <h2>إدارة الأعضاء</h2>
@@ -919,13 +921,33 @@
                 </div>
             </div>
 
-            <!-- المراسلات -->
+            <!-- المراسلات (الطلبات - الشكاوي - الاقتراحات - التقارير) -->
             <div id="messagesSection" class="section">
                 <div class="section-header">
                     <h2>المراسلات</h2>
-                    <button class="btn" onclick="openModal('messageModal')">
-                        <i class="fas fa-plus"></i> مراسلة جديدة
-                    </button>
+                    <div>
+                        <button class="btn" onclick="openMessageModal('طلب')">
+                            <i class="fas fa-file-signature"></i> طلب جديد
+                        </button>
+                        <button class="btn" onclick="openMessageModal('شكوى')" style="background: linear-gradient(135deg, var(--danger), #c0392b);">
+                            <i class="fas fa-exclamation-triangle"></i> شكوى جديدة
+                        </button>
+                        <button class="btn" onclick="openMessageModal('اقتراح')" style="background: linear-gradient(135deg, var(--warning), #e67e22);">
+                            <i class="fas fa-lightbulb"></i> اقتراح جديد
+                        </button>
+                        <button class="btn" onclick="openMessageModal('تقرير')" style="background: linear-gradient(135deg, var(--accent), #2980b9);">
+                            <i class="fas fa-file-alt"></i> تقرير جديد
+                        </button>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <div class="tab active" onclick="filterMessages('all')">الكل</div>
+                    <div class="tab" onclick="filterMessages('طلب')">الطلبات</div>
+                    <div class="tab" onclick="filterMessages('شكوى')">الشكاوي</div>
+                    <div class="tab" onclick="filterMessages('اقتراح')">الاقتراحات</div>
+                    <div class="tab" onclick="filterMessages('تقرير')">التقارير</div>
+                    <div class="tab" onclick="filterMessages('قرار')">القرارات</div>
                 </div>
 
                 <div class="table-responsive">
@@ -933,16 +955,42 @@
                         <thead>
                             <tr>
                                 <th>رقم المعاملة</th>
+                                <th>النوع</th>
                                 <th>من</th>
                                 <th>إلى</th>
                                 <th>الموضوع</th>
                                 <th>التاريخ</th>
                                 <th>الحالة</th>
-                                <th>الاعتماد</th>
                                 <th>التفاصيل</th>
                             </tr>
                         </thead>
                         <tbody id="messagesList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- القرارات -->
+            <div id="decisionsSection" class="section">
+                <div class="section-header">
+                    <h2>القرارات</h2>
+                    <button class="btn" onclick="openModal('decisionModal')">
+                        <i class="fas fa-gavel"></i> قرار جديد
+                    </button>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم القرار</th>
+                                <th>الموضوع</th>
+                                <th>من</th>
+                                <th>إلى</th>
+                                <th>التاريخ</th>
+                                <th>التفاصيل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="decisionsList"></tbody>
                     </table>
                 </div>
             </div>
@@ -971,48 +1019,89 @@
                 <div class="grid-3" id="branchesGrid"></div>
             </div>
 
-            <!-- التقارير -->
+            <!-- التقارير والأرشيف -->
             <div id="reportsSection" class="section">
                 <div class="section-header">
-                    <h2>التقارير والإحصائيات</h2>
+                    <h2>التقارير والأرشيف</h2>
                     <div>
                         <input type="date" id="reportFrom" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; margin-left: 10px;">
                         <input type="date" id="reportTo" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd;">
-                        <button class="btn" onclick="loadReports()" style="margin-right: 10px;"><i class="fas fa-search"></i> بحث</button>
+                        <select id="reportType" style="padding: 8px; border-radius: 5px; border: 1px solid #ddd; margin: 0 10px;">
+                            <option value="all">الكل</option>
+                            <option value="طلب">طلبات</option>
+                            <option value="شكوى">شكاوي</option>
+                            <option value="اقتراح">اقتراحات</option>
+                            <option value="تقرير">تقارير</option>
+                            <option value="قرار">قرارات</option>
+                            <option value="تقييم">تقييمات</option>
+                        </select>
+                        <button class="btn" onclick="loadReports()"><i class="fas fa-search"></i> بحث</button>
                     </div>
                 </div>
 
                 <div class="stats-grid">
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="stat-icon"><i class="fas fa-file-signature"></i></div>
                         <div class="stat-info">
-                            <h3>نسبة النشاط</h3>
-                            <div class="number" id="activityRate">0%</div>
+                            <h3>الطلبات</h3>
+                            <div class="number" id="requestsCount">0</div>
                         </div>
                     </div>
                     <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-icon"><i class="fas fa-exclamation-triangle"></i></div>
                         <div class="stat-info">
-                            <h3>نسبة الاعتماد</h3>
-                            <div class="number" id="approvalRate">0%</div>
+                            <h3>الشكاوي</h3>
+                            <div class="number" id="complaintsCount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-lightbulb"></i></div>
+                        <div class="stat-info">
+                            <h3>الاقتراحات</h3>
+                            <div class="number" id="suggestionsCount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-file-alt"></i></div>
+                        <div class="stat-info">
+                            <h3>التقارير</h3>
+                            <div class="number" id="reportsCount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-gavel"></i></div>
+                        <div class="stat-info">
+                            <h3>القرارات</h3>
+                            <div class="number" id="decisionsCount">0</div>
                         </div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-star"></i></div>
                         <div class="stat-info">
-                            <h3>متوسط التقييم</h3>
-                            <div class="number" id="avgRating">0</div>
+                            <h3>التقييمات</h3>
+                            <div class="number" id="ratingsCount">0</div>
                         </div>
                     </div>
                 </div>
 
-                <div style="background: #f8f9fa; border-radius: 12px; padding: 20px; margin-top: 20px;">
-                    <h3 style="color: var(--primary); margin-bottom: 15px;">تفاصيل المراسلات</h3>
-                    <div id="messagesStats"></div>
+                <div class="table-responsive" style="margin-top: 20px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم</th>
+                                <th>النوع</th>
+                                <th>الموضوع</th>
+                                <th>من</th>
+                                <th>التاريخ</th>
+                                <th>الحالة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="archiveList"></tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- تقييم اللجان (لرئيس اللجان فقط) -->
+            <!-- تقييم اللجان -->
             <div id="committeeRatingsSection" class="section">
                 <div class="section-header">
                     <h2>تقييم اللجان</h2>
@@ -1021,7 +1110,7 @@
                 <div class="grid-3" id="committeesRatingGrid"></div>
             </div>
 
-            <!-- تقييم الفروع (لرئيس الفروع فقط) -->
+            <!-- تقييم الفروع -->
             <div id="branchRatingsSection" class="section">
                 <div class="section-header">
                     <h2>تقييم الفروع</h2>
@@ -1107,6 +1196,26 @@
                         <label>بدء أرقام العضوية من</label>
                         <input type="number" id="memberStartNumber" value="1">
                     </div>
+                    <div class="form-group">
+                        <label>بادئة الطلبات</label>
+                        <input type="text" id="requestPrefix" value="REQ">
+                    </div>
+                    <div class="form-group">
+                        <label>بادئة الشكاوي</label>
+                        <input type="text" id="complaintPrefix" value="COM">
+                    </div>
+                    <div class="form-group">
+                        <label>بادئة الاقتراحات</label>
+                        <input type="text" id="suggestionPrefix" value="SUG">
+                    </div>
+                    <div class="form-group">
+                        <label>بادئة التقارير</label>
+                        <input type="text" id="reportPrefix" value="RPT">
+                    </div>
+                    <div class="form-group">
+                        <label>بادئة القرارات</label>
+                        <input type="text" id="decisionPrefix" value="DEC">
+                    </div>
                     <button class="btn" onclick="saveSystemSettings()">حفظ الإعدادات</button>
                 </div>
             </div>
@@ -1169,7 +1278,9 @@
     <div id="messageModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('messageModal')">&times;</span>
-            <h2 style="margin-bottom: 25px; color: var(--primary);">مراسلة جديدة</h2>
+            <h2 id="messageModalTitle" style="margin-bottom: 25px; color: var(--primary);">مراسلة جديدة</h2>
+            
+            <input type="hidden" id="messageType">
             
             <div class="form-group">
                 <label>إلى</label>
@@ -1187,7 +1298,55 @@
                 <textarea id="messageContent" rows="5" required></textarea>
             </div>
 
+            <div class="form-group" id="reportPeriodGroup" style="display: none;">
+                <label>الفترة</label>
+                <select id="reportPeriod">
+                    <option value="يومي">يومي</option>
+                    <option value="أسبوعي">أسبوعي</option>
+                    <option value="شهري">شهري</option>
+                    <option value="سنوي">سنوي</option>
+                </select>
+            </div>
+
             <button class="btn" style="width: 100%;" onclick="sendMessage()">إرسال</button>
+        </div>
+    </div>
+
+    <!-- مودال قرار جديد -->
+    <div id="decisionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('decisionModal')">&times;</span>
+            <h2 style="margin-bottom: 25px; color: var(--primary);">قرار جديد</h2>
+            
+            <div class="form-group">
+                <label>رقم القرار</label>
+                <input type="text" id="decisionNumber" value="DEC-" + Date.now()>
+            </div>
+
+            <div class="form-group">
+                <label>الموضوع</label>
+                <input type="text" id="decisionSubject" required>
+            </div>
+
+            <div class="form-group">
+                <label>إلى</label>
+                <select id="decisionTo" required>
+                    <option value="">اختر المستلمين...</option>
+                    <option value="all">📢 للجميع</option>
+                    <option value="vp">👤 النائب الأول</option>
+                    <option value="head_committees">👥 رئيس اللجان</option>
+                    <option value="head_branches">👥 رئيس الفروع</option>
+                    <option value="heads">👥 رؤساء اللجان والفروع</option>
+                    <option value="heads_vp">👥 رؤساء اللجان والفروع + النائب</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>محتوى القرار</label>
+                <textarea id="decisionContent" rows="5" required></textarea>
+            </div>
+
+            <button class="btn" style="width: 100%;" onclick="addDecision()">إصدار القرار</button>
         </div>
     </div>
 
@@ -1221,7 +1380,7 @@
         </div>
     </div>
 
-    <!-- مودال تفاصيل المراسلة مع التراك -->
+    <!-- مودال تفاصيل المراسلة -->
     <div id="messageDetailsModal" class="modal">
         <div class="modal-content">
             <span class="close-modal" onclick="closeModal('messageDetailsModal')">&times;</span>
@@ -1240,9 +1399,8 @@
                 <button class="btn" style="margin-top: 10px;" onclick="addComment()">إضافة تعليق</button>
             </div>
 
-            <div style="margin-top: 20px;">
-                <button class="btn" onclick="approveMessage(currentMessageId)" id="approveBtn">✅ اعتماد المراسلة</button>
-                <button class="btn btn-danger" onclick="rejectMessage(currentMessageId)" id="rejectBtn" style="margin-right: 10px;">❌ رفض</button>
+            <div style="margin-top: 20px;" id="approvalActions">
+                <!-- هتتحط هنا أزرار الاعتماد حسب النوع -->
             </div>
         </div>
     </div>
@@ -1280,6 +1438,7 @@
         let systemData = {
             members: [],
             messages: [],
+            decisions: [],
             committees: [],
             branches: [],
             ratings: [],
@@ -1291,7 +1450,14 @@
                 secondaryColor: '#34495e',
                 accentColor: '#3498db',
                 logo: null,
-                orgName: 'نقابة تكنولوجيا المعلومات'
+                orgName: 'نقابة تكنولوجيا المعلومات',
+                prefixes: {
+                    طلب: 'REQ',
+                    شكوى: 'COM',
+                    اقتراح: 'SUG',
+                    تقرير: 'RPT',
+                    قرار: 'DEC'
+                }
             },
             currentUser: null
         };
@@ -1299,10 +1465,11 @@
         let currentMessageId = null;
         let currentRatingEntity = null;
         let currentRatingType = null;
+        let currentRatingValue = 0;
 
         // تحميل البيانات
         function loadData() {
-            const saved = localStorage.getItem('nokabaSystemV2');
+            const saved = localStorage.getItem('nokabaSystemV3');
             if (saved) {
                 try {
                     systemData = JSON.parse(saved);
@@ -1311,6 +1478,7 @@
             
             systemData.members = systemData.members || [];
             systemData.messages = systemData.messages || [];
+            systemData.decisions = systemData.decisions || [];
             systemData.committees = systemData.committees || [];
             systemData.branches = systemData.branches || [];
             systemData.ratings = systemData.ratings || [];
@@ -1322,7 +1490,14 @@
                 secondaryColor: '#34495e',
                 accentColor: '#3498db',
                 logo: null,
-                orgName: 'نقابة تكنولوجيا المعلومات'
+                orgName: 'نقابة تكنولوجيا المعلومات',
+                prefixes: {
+                    طلب: 'REQ',
+                    شكوى: 'COM',
+                    اقتراح: 'SUG',
+                    تقرير: 'RPT',
+                    قرار: 'DEC'
+                }
             };
             
             // إنشاء حساب النقيب إذا لم يكن موجوداً
@@ -1342,12 +1517,60 @@
                     lastLogout: null,
                     online: false
                 });
+                
+                systemData.members.push({
+                    id: 'vp-1',
+                    memberId: '2',
+                    name: 'محمد النائب',
+                    email: 'vp@nokaba.com',
+                    password: '123456',
+                    role: 'النائب_الاول',
+                    title: 'النائب الأول',
+                    image: null,
+                    entity: null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    lastLogout: null,
+                    online: false
+                });
+                
+                systemData.members.push({
+                    id: 'hc-1',
+                    memberId: '3',
+                    name: 'سارة رئيس اللجان',
+                    email: 'head.committee@nokaba.com',
+                    password: '123456',
+                    role: 'رئيس_اللجان',
+                    title: 'رئيس اللجان',
+                    image: null,
+                    entity: null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    lastLogout: null,
+                    online: false
+                });
+                
+                systemData.members.push({
+                    id: 'hb-1',
+                    memberId: '4',
+                    name: 'خالد رئيس الفروع',
+                    email: 'head.branch@nokaba.com',
+                    password: '123456',
+                    role: 'رئيس_الفروع',
+                    title: 'رئيس الفروع',
+                    image: null,
+                    entity: null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    lastLogout: null,
+                    online: false
+                });
             }
         }
 
         // حفظ البيانات
         function saveData() {
-            localStorage.setItem('nokabaSystemV2', JSON.stringify(systemData));
+            localStorage.setItem('nokabaSystemV3', JSON.stringify(systemData));
         }
 
         // ==================== شاشة الدخول ====================
@@ -1381,10 +1604,12 @@
                 loadStats();
                 loadMembers();
                 loadMessages();
+                loadDecisions();
                 loadCommittees();
                 loadBranches();
                 loadOnlineUsers();
                 loadRecentActivities();
+                loadReports();
                 
                 // تفريغ حقول الدخول
                 document.getElementById('loginEmail').value = '';
@@ -1393,6 +1618,32 @@
                 alert('❌ البريد الإلكتروني أو كلمة المرور غير صحيحة');
             }
         }
+
+        // التحقق من حالة تسجيل الدخول عند تحميل الصفحة
+        window.onload = function() {
+            loadData();
+            
+            // التحقق من وجود مستخدم مسجل
+            if (systemData.currentUser && systemData.currentUser.online) {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'flex';
+                updateUI();
+                loadStats();
+                loadMembers();
+                loadMessages();
+                loadDecisions();
+                loadCommittees();
+                loadBranches();
+                loadOnlineUsers();
+                loadRecentActivities();
+                loadReports();
+            }
+            
+            // تحديث التاريخ والوقت
+            setInterval(() => {
+                document.getElementById('currentDateTime').innerHTML = new Date().toLocaleString('ar-EG');
+            }, 1000);
+        };
 
         // ==================== القائمة الديناميكية ====================
         function renderMenu() {
@@ -1409,6 +1660,13 @@
                 </div>
             `;
             
+            // القرارات للكل
+            menu += `
+                <div class="menu-item" onclick="showSection('decisionsSection')">
+                    <i class="fas fa-gavel"></i> القرارات
+                </div>
+            `;
+            
             // صلاحيات المدير (النقيب فقط)
             if (user.role === 'النقيب') {
                 menu += `
@@ -1422,7 +1680,7 @@
                         <i class="fas fa-code-branch"></i> الفروع
                     </div>
                     <div class="menu-item" onclick="showSection('reportsSection')">
-                        <i class="fas fa-chart-pie"></i> التقارير
+                        <i class="fas fa-chart-pie"></i> التقارير والأرشيف
                     </div>
                     <div class="menu-item" onclick="showSection('systemSettingsSection')">
                         <i class="fas fa-cog"></i> إعدادات النظام
@@ -1501,6 +1759,7 @@
             
             if (sectionId === 'membersSection') loadMembers();
             if (sectionId === 'messagesSection') loadMessages();
+            if (sectionId === 'decisionsSection') loadDecisions();
             if (sectionId === 'committeesSection') loadCommittees();
             if (sectionId === 'branchesSection') loadBranches();
             if (sectionId === 'reportsSection') loadReports();
@@ -1539,7 +1798,7 @@
             
             // عدد المراسلات غير المقروءة للمستخدم
             const unreadMessages = systemData.messages.filter(m => 
-                (m.to === user.id || m.to === user.role || m.to?.includes(user.id) || m.to?.includes(user.role)) && 
+                (m.to === user.id || m.to === user.role || m.to?.includes(user.id) || m.to?.includes(user.role) || m.to?.includes('all')) && 
                 !m.read?.includes(user.id)
             ).length;
             
@@ -1576,7 +1835,7 @@
                         </div>
                         <div>
                             <div style="font-weight: 600;">${user.name}</div>
-                            <div style="font-size: 12px; color: #7f8c8d;">${user.role}</div>
+                            <div style="font-size: 12px; color: #7f8c8d;">${user.title}</div>
                         </div>
                         <div style="margin-right: auto;">
                             <span class="status-badge status-online"><i class="fas fa-circle"></i> متصل</span>
@@ -1783,6 +2042,20 @@
         }
 
         // ==================== إدارة المراسلات ====================
+        function openMessageModal(type) {
+            document.getElementById('messageModalTitle').textContent = type + ' جديد';
+            document.getElementById('messageType').value = type;
+            
+            if (type === 'تقرير') {
+                document.getElementById('reportPeriodGroup').style.display = 'block';
+            } else {
+                document.getElementById('reportPeriodGroup').style.display = 'none';
+            }
+            
+            populateMessageRecipients();
+            openModal('messageModal');
+        }
+
         function populateMessageRecipients() {
             const select = document.getElementById('messageTo');
             select.innerHTML = '';
@@ -1795,21 +2068,6 @@
                 const option = document.createElement('option');
                 option.value = 'all';
                 option.textContent = '📢 جميع الأعضاء';
-                select.appendChild(option);
-                
-                option = document.createElement('option');
-                option.value = 'all_committees';
-                option.textContent = '📋 جميع اللجان';
-                select.appendChild(option);
-                
-                option = document.createElement('option');
-                option.value = 'all_branches';
-                option.textContent = '🏢 جميع الفروع';
-                select.appendChild(option);
-                
-                option = document.createElement('option');
-                option.value = 'heads';
-                option.textContent = '👥 رؤساء اللجان والفروع';
                 select.appendChild(option);
                 
                 // إضافة اللجان
@@ -1906,16 +2164,24 @@
 
         function sendMessage() {
             const selectedOptions = Array.from(document.getElementById('messageTo').selectedOptions).map(o => o.value);
+            const type = document.getElementById('messageType').value;
+            
+            // إنشاء رقم المعاملة حسب النوع
+            const prefix = systemData.settings.prefixes[type] || 'MSG';
+            const trackingNumber = prefix + '-' + Date.now();
             
             const message = {
                 id: 'msg-' + Date.now(),
-                trackingNumber: 'TR-' + Date.now(),
+                trackingNumber: trackingNumber,
+                type: type,
                 from: systemData.currentUser.id,
                 fromName: systemData.currentUser.name,
                 fromRole: systemData.currentUser.role,
+                fromEntity: systemData.currentUser.entity,
                 to: selectedOptions,
                 subject: document.getElementById('messageSubject').value,
                 content: document.getElementById('messageContent').value,
+                period: document.getElementById('reportPeriod')?.value || null,
                 date: new Date().toISOString(),
                 status: 'pending',
                 approved: false,
@@ -1924,7 +2190,7 @@
                 rejectionReason: null,
                 read: [],
                 history: [{
-                    action: 'تم إنشاء المراسلة',
+                    action: 'تم إنشاء ' + type,
                     by: systemData.currentUser.id,
                     byName: systemData.currentUser.name,
                     at: new Date().toISOString(),
@@ -1940,10 +2206,10 @@
             loadMessages();
             loadStats();
             
-            alert(`تم الإرسال برقم: ${message.trackingNumber}`);
+            alert(`تم الإرسال برقم: ${trackingNumber}`);
         }
 
-        function loadMessages() {
+        function loadMessages(filter = 'all') {
             const tbody = document.getElementById('messagesList');
             if (!tbody) return;
             
@@ -1956,48 +2222,62 @@
                 if (m.from === user.id) return true;
                 
                 // المستلم هو المستخدم
-                if (m.to.includes(user.id)) return true;
+                if (m.to?.includes(user.id)) return true;
                 
                 // المستلم هو دور المستخدم
-                if (m.to.includes(user.role)) return true;
+                if (m.to?.includes(user.role)) return true;
+                
+                // المستلم هو جهة المستخدم
+                if (user.entity && m.to?.includes(user.entity)) return true;
                 
                 // المستلم هو الكل والنائب أو النقيب
                 if (user.role === 'النقيب' || user.role === 'النائب_الاول') {
-                    if (m.to.includes('all') || 
-                        m.to.includes('all_committees') || 
-                        m.to.includes('all_branches') ||
-                        m.to.includes('heads')) return true;
+                    if (m.to?.includes('all') || 
+                        m.to?.includes('all_committees') || 
+                        m.to?.includes('all_branches')) return true;
                 }
                 
                 // رئيس اللجان يشوف مراسلات اللجان
                 if (user.role === 'رئيس_اللجان') {
-                    if (m.to.includes('all_committees') || 
-                        m.to.some(t => t.startsWith('committee_'))) return true;
+                    if (m.to?.includes('all_committees') || 
+                        m.to?.some(t => t.startsWith('committee_'))) return true;
                 }
                 
                 // رئيس الفروع يشوف مراسلات الفروع
                 if (user.role === 'رئيس_الفروع') {
-                    if (m.to.includes('all_branches') || 
-                        m.to.some(t => t.startsWith('branch_'))) return true;
+                    if (m.to?.includes('all_branches') || 
+                        m.to?.some(t => t.startsWith('branch_'))) return true;
                 }
                 
                 return false;
             });
+            
+            // تصفية حسب النوع
+            if (filter !== 'all') {
+                messages = messages.filter(m => m.type === filter);
+            }
             
             let html = '';
             messages.reverse().forEach(m => {
                 const fromUser = systemData.members.find(mem => mem.id === m.from);
                 const isRead = m.read?.includes(user.id);
                 
+                let toText = '';
+                if (Array.isArray(m.to)) {
+                    toText = m.to.length + ' مستلم';
+                } else {
+                    toText = m.to;
+                }
+                
                 html += `
                     <tr onclick="showMessageDetails('${m.id}')" style="${!isRead && m.from !== user.id ? 'font-weight: bold; background: rgba(52,152,219,0.05);' : ''}">
                         <td>${m.trackingNumber}</td>
+                        <td><span class="status-badge" style="background: ${getTypeColor(m.type)}20; color: ${getTypeColor(m.type)};">${m.type}</span></td>
                         <td>${fromUser?.name || m.fromName}</td>
-                        <td>${Array.isArray(m.to) ? m.to.length + ' مستلم' : m.to}</td>
+                        <td>${toText}</td>
                         <td>${m.subject}</td>
                         <td>${new Date(m.date).toLocaleString('ar-EG')}</td>
-                        <td><span class="status-badge ${m.status === 'pending' ? 'status-pending' : m.status === 'approved' ? 'status-approved' : 'status-rejected'}">${m.status === 'pending' ? 'قيد الانتظار' : m.status === 'approved' ? 'معتمد' : 'مرفوض'}</span></td>
-                        <td>${m.approved ? '✅' : m.status === 'rejected' ? '❌' : '⏳'}</td>
+                        <td><span class="status-badge ${m.status === 'pending' ? 'status-pending' : m.status === 'approved' ? 'status-approved' : m.status === 'rejected' ? 'status-rejected' : 'status-in-progress'}">${m.status === 'pending' ? 'قيد الانتظار' : m.status === 'approved' ? 'معتمد' : m.status === 'rejected' ? 'مرفوض' : 'قيد المعالجة'}</span></td>
                         <td><i class="fas fa-eye" style="color: var(--accent);"></i></td>
                     </tr>
                 `;
@@ -2008,6 +2288,23 @@
             // تحديث عداد المراسلات غير المقروءة
             const unreadCount = messages.filter(m => !m.read?.includes(user.id) && m.from !== user.id).length;
             document.getElementById('menuMessagesBadge').textContent = unreadCount;
+        }
+
+        function filterMessages(type) {
+            document.querySelectorAll('#messagesSection .tab').forEach(t => t.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            loadMessages(type);
+        }
+
+        function getTypeColor(type) {
+            const colors = {
+                'طلب': '#3498db',
+                'شكوى': '#e74c3c',
+                'اقتراح': '#f39c12',
+                'تقرير': '#27ae60',
+                'قرار': '#9b59b6'
+            };
+            return colors[type] || '#3498db';
         }
 
         function showMessageDetails(messageId) {
@@ -2031,7 +2328,6 @@
                     if (t === 'all') return 'جميع الأعضاء';
                     if (t === 'all_committees') return 'جميع اللجان';
                     if (t === 'all_branches') return 'جميع الفروع';
-                    if (t === 'heads') return 'رؤساء اللجان والفروع';
                     if (t === 'head_committees') return 'رئيس اللجان';
                     if (t === 'head_branches') return 'رئيس الفروع';
                     if (t === 'vp') return 'النائب الأول';
@@ -2085,11 +2381,13 @@
             document.getElementById('messageDetailsContent').innerHTML = `
                 <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
                     <p><strong>رقم المعاملة:</strong> ${message.trackingNumber}</p>
+                    <p><strong>النوع:</strong> <span class="status-badge" style="background: ${getTypeColor(message.type)}20; color: ${getTypeColor(message.type)};">${message.type}</span></p>
                     <p><strong>من:</strong> ${fromUser?.name} (${fromUser?.title})</p>
                     <p><strong>إلى:</strong> ${toText}</p>
                     <p><strong>الموضوع:</strong> ${message.subject}</p>
                     <p><strong>المحتوى:</strong> ${message.content}</p>
-                    <p><strong>الحالة:</strong> <span class="status-badge ${message.status === 'pending' ? 'status-pending' : message.status === 'approved' ? 'status-approved' : 'status-rejected'}">${message.status === 'pending' ? 'قيد الانتظار' : message.status === 'approved' ? 'معتمد' : 'مرفوض'}</span></p>
+                    ${message.period ? `<p><strong>الفترة:</strong> ${message.period}</p>` : ''}
+                    <p><strong>الحالة:</strong> <span class="status-badge ${message.status === 'pending' ? 'status-pending' : message.status === 'approved' ? 'status-approved' : message.status === 'rejected' ? 'status-rejected' : 'status-in-progress'}">${message.status === 'pending' ? 'قيد الانتظار' : message.status === 'approved' ? 'معتمد' : message.status === 'rejected' ? 'مرفوض' : 'قيد المعالجة'}</span></p>
                     ${message.approvalNumber ? `<p><strong>رقم القرار:</strong> ${message.approvalNumber}</p>` : ''}
                     ${message.rejectionReason ? `<p><strong>سبب الرفض:</strong> ${message.rejectionReason}</p>` : ''}
                 </div>
@@ -2097,17 +2395,36 @@
             
             document.getElementById('messageTimeline').innerHTML = historyHtml;
             
-            // إظهار/إخفاء أزرار الاعتماد
-            const approveBtn = document.getElementById('approveBtn');
-            const rejectBtn = document.getElementById('rejectBtn');
+            // إضافة أزرار الاعتماد حسب الصلاحية والنوع
+            let actions = '';
+            const user = systemData.currentUser;
             
-            if (systemData.currentUser.role === 'النقيب' && message.status === 'pending') {
-                approveBtn.style.display = 'inline-block';
-                rejectBtn.style.display = 'inline-block';
-            } else {
-                approveBtn.style.display = 'none';
-                rejectBtn.style.display = 'none';
+            if (user.role === 'النقيب' && message.status === 'pending') {
+                actions += `
+                    <button class="btn" onclick="approveMessage('${message.id}')" style="margin-left: 10px;">✅ اعتماد</button>
+                    <button class="btn btn-danger" onclick="rejectMessage('${message.id}')">❌ رفض</button>
+                `;
+            } else if (user.role === 'رئيس_اللجان' && message.type === 'تقرير' && message.status === 'pending' && message.to?.includes('head_committees')) {
+                actions += `
+                    <button class="btn" onclick="approveMessage('${message.id}')" style="margin-left: 10px;">✅ اعتماد</button>
+                    <button class="btn btn-danger" onclick="rejectMessage('${message.id}')">❌ رفض</button>
+                `;
+            } else if (user.role === 'رئيس_الفروع' && message.type === 'تقرير' && message.status === 'pending' && message.to?.includes('head_branches')) {
+                actions += `
+                    <button class="btn" onclick="approveMessage('${message.id}')" style="margin-left: 10px;">✅ اعتماد</button>
+                    <button class="btn btn-danger" onclick="rejectMessage('${message.id}')">❌ رفض</button>
+                `;
+            } else if (message.type === 'شكوى' && message.status === 'pending') {
+                actions += `
+                    <button class="btn" onclick="startProcessing('${message.id}')" style="margin-left: 10px; background: var(--accent);">▶️ بدء المعالجة</button>
+                `;
+            } else if (message.type === 'شكوى' && message.status === 'in-progress') {
+                actions += `
+                    <button class="btn" onclick="resolveComplaint('${message.id}')" style="background: var(--success);">✅ تم الحل</button>
+                `;
             }
+            
+            document.getElementById('approvalActions').innerHTML = actions;
             
             openModal('messageDetailsModal');
         }
@@ -2148,21 +2465,35 @@
             
             message.status = 'approved';
             message.approved = true;
-            message.approvalNumber = 'DEC-' + Date.now();
+            message.approvalNumber = systemData.settings.prefixes.قرار + '-' + Date.now();
             message.approvedBy = systemData.currentUser.id;
             message.approvedAt = new Date().toISOString();
             
             message.history.push({
-                action: 'تم اعتماد المراسلة',
+                action: 'تم اعتماد ' + message.type,
                 by: systemData.currentUser.id,
                 byName: systemData.currentUser.name,
                 at: new Date().toISOString(),
                 comment: 'تم الاعتماد وإصدار قرار رقم ' + message.approvalNumber
             });
             
+            // إنشاء قرار تلقائي
+            systemData.decisions.push({
+                id: 'dec-' + Date.now(),
+                number: message.approvalNumber,
+                subject: 'اعتماد ' + message.type + ': ' + message.subject,
+                from: message.approvedBy,
+                fromName: systemData.currentUser.name,
+                to: message.from,
+                content: 'تم اعتماد ' + message.type + ' رقم ' + message.trackingNumber,
+                date: new Date().toISOString(),
+                relatedMessage: message.id
+            });
+            
             saveData();
             showMessageDetails(messageId);
             loadMessages();
+            loadDecisions();
             alert(`تم الاعتماد برقم قرار: ${message.approvalNumber}`);
         }
 
@@ -2177,7 +2508,7 @@
             message.rejectionReason = reason;
             
             message.history.push({
-                action: 'تم رفض المراسلة',
+                action: 'تم رفض ' + message.type,
                 by: systemData.currentUser.id,
                 byName: systemData.currentUser.name,
                 at: new Date().toISOString(),
@@ -2187,6 +2518,150 @@
             saveData();
             showMessageDetails(messageId);
             loadMessages();
+        }
+
+        function startProcessing(messageId) {
+            const message = systemData.messages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            message.status = 'in-progress';
+            
+            message.history.push({
+                action: 'بدأ معالجة الشكوى',
+                by: systemData.currentUser.id,
+                byName: systemData.currentUser.name,
+                at: new Date().toISOString(),
+                comment: 'تم تحويل الشكوى للمختص'
+            });
+            
+            saveData();
+            showMessageDetails(messageId);
+            loadMessages();
+        }
+
+        function resolveComplaint(messageId) {
+            const message = systemData.messages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            message.status = 'resolved';
+            
+            message.history.push({
+                action: 'تم حل الشكوى',
+                by: systemData.currentUser.id,
+                byName: systemData.currentUser.name,
+                at: new Date().toISOString(),
+                comment: 'تم حل الشكوى وإغلاقها'
+            });
+            
+            saveData();
+            showMessageDetails(messageId);
+            loadMessages();
+        }
+
+        // ==================== إدارة القرارات ====================
+        function addDecision() {
+            const decision = {
+                id: 'dec-' + Date.now(),
+                number: document.getElementById('decisionNumber').value,
+                subject: document.getElementById('decisionSubject').value,
+                from: systemData.currentUser.id,
+                fromName: systemData.currentUser.name,
+                to: document.getElementById('decisionTo').value,
+                content: document.getElementById('decisionContent').value,
+                date: new Date().toISOString(),
+                history: [{
+                    action: 'تم إصدار القرار',
+                    by: systemData.currentUser.id,
+                    byName: systemData.currentUser.name,
+                    at: new Date().toISOString()
+                }]
+            };
+            
+            systemData.decisions.push(decision);
+            
+            // إضافة كمراسلة للنظام
+            systemData.messages.push({
+                id: 'msg-' + Date.now(),
+                trackingNumber: decision.number,
+                type: 'قرار',
+                from: decision.from,
+                fromName: decision.fromName,
+                fromRole: systemData.currentUser.role,
+                to: [decision.to],
+                subject: decision.subject,
+                content: decision.content,
+                date: decision.date,
+                status: 'approved',
+                approved: true,
+                read: [],
+                history: decision.history
+            });
+            
+            saveData();
+            closeModal('decisionModal');
+            loadDecisions();
+            loadMessages();
+            alert(`تم إصدار القرار برقم: ${decision.number}`);
+        }
+
+        function loadDecisions() {
+            const tbody = document.getElementById('decisionsList');
+            if (!tbody) return;
+            
+            let html = '';
+            systemData.decisions.reverse().forEach(d => {
+                let toText = '';
+                if (d.to === 'all') toText = 'الجميع';
+                else if (d.to === 'vp') toText = 'النائب الأول';
+                else if (d.to === 'head_committees') toText = 'رئيس اللجان';
+                else if (d.to === 'head_branches') toText = 'رئيس الفروع';
+                else if (d.to === 'heads') toText = 'رؤساء اللجان والفروع';
+                else if (d.to === 'heads_vp') toText = 'رؤساء اللجان والفروع + النائب';
+                
+                html += `
+                    <tr onclick="showDecisionDetails('${d.id}')">
+                        <td>${d.number}</td>
+                        <td>${d.subject}</td>
+                        <td>${d.fromName}</td>
+                        <td>${toText}</td>
+                        <td>${new Date(d.date).toLocaleString('ar-EG')}</td>
+                        <td><i class="fas fa-eye" style="color: var(--accent);"></i></td>
+                    </tr>
+                `;
+            });
+            
+            tbody.innerHTML = html;
+            document.getElementById('decisionsCount').textContent = systemData.decisions.length;
+        }
+
+        function showDecisionDetails(decisionId) {
+            const decision = systemData.decisions.find(d => d.id === decisionId);
+            if (!decision) return;
+            
+            let historyHtml = '';
+            decision.history.forEach((h, index) => {
+                historyHtml += `
+                    <div class="timeline-item">
+                        <div class="timeline-dot">${index + 1}</div>
+                        <div class="timeline-content">
+                            <h4>${h.action}</h4>
+                            <p>بواسطة: ${h.byName}</p>
+                            <div class="timeline-date">${new Date(h.at).toLocaleString('ar-EG')}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            alert(`
+                رقم القرار: ${decision.number}
+                الموضوع: ${decision.subject}
+                من: ${decision.fromName}
+                المحتوى: ${decision.content}
+                التاريخ: ${new Date(decision.date).toLocaleString('ar-EG')}
+                
+                مسار القرار:
+                ${historyHtml}
+            `);
         }
 
         // ==================== إدارة اللجان ====================
@@ -2328,6 +2803,9 @@
             
             const rating = {
                 id: 'rate-' + Date.now(),
+                type: currentRatingType,
+                entityId: currentRatingEntity.id,
+                entityName: currentRatingEntity.name,
                 by: systemData.currentUser.id,
                 byName: systemData.currentUser.name,
                 rating: currentRatingValue,
@@ -2395,6 +2873,7 @@
             });
             
             grid.innerHTML = html || '<p style="color: #7f8c8d;">لا توجد لجان</p>';
+            document.getElementById('ratingsCount').textContent = systemData.ratings.length;
         }
 
         function loadBranchRatings() {
@@ -2455,70 +2934,109 @@
             alert(details);
         }
 
-        // ==================== التقارير ====================
+        // ==================== التقارير والأرشيف ====================
         function loadReports() {
             const fromDate = document.getElementById('reportFrom').value;
             const toDate = document.getElementById('reportTo').value;
+            const type = document.getElementById('reportType').value;
             
-            let filteredMessages = systemData.messages;
+            let items = [];
             
+            // جمع كل البيانات
+            if (type === 'all' || type === 'تقييم') {
+                items = items.concat(systemData.ratings.map(r => ({
+                    ...r,
+                    itemType: 'تقييم',
+                    number: r.id,
+                    subject: `تقييم ${r.entityName}`,
+                    status: 'تم'
+                })));
+            }
+            
+            if (type === 'all' || type === 'قرار') {
+                items = items.concat(systemData.decisions.map(d => ({
+                    ...d,
+                    itemType: 'قرار',
+                    number: d.number,
+                    subject: d.subject,
+                    fromName: d.fromName,
+                    date: d.date,
+                    status: 'صادر'
+                })));
+            }
+            
+            if (type === 'all' || ['طلب', 'شكوى', 'اقتراح', 'تقرير'].includes(type)) {
+                items = items.concat(systemData.messages
+                    .filter(m => type === 'all' || m.type === type)
+                    .map(m => ({
+                        ...m,
+                        itemType: m.type,
+                        number: m.trackingNumber,
+                        subject: m.subject,
+                        fromName: m.fromName,
+                        date: m.date,
+                        status: m.status
+                    })));
+            }
+            
+            // فلترة بالتاريخ
             if (fromDate && toDate) {
-                filteredMessages = filteredMessages.filter(m => {
-                    const msgDate = new Date(m.date);
-                    return msgDate >= new Date(fromDate) && msgDate <= new Date(toDate);
+                items = items.filter(i => {
+                    const itemDate = new Date(i.date);
+                    return itemDate >= new Date(fromDate) && itemDate <= new Date(toDate);
                 });
             }
             
-            const totalMessages = filteredMessages.length;
-            const approvedMessages = filteredMessages.filter(m => m.approved).length;
-            const pendingMessages = filteredMessages.filter(m => m.status === 'pending').length;
-            const rejectedMessages = filteredMessages.filter(m => m.status === 'rejected').length;
+            // ترتيب تنازلي
+            items.sort((a, b) => new Date(b.date) - new Date(a.date));
             
-            document.getElementById('activityRate').textContent = 
-                ((systemData.members.filter(m => m.online).length / (systemData.members.length || 1)) * 100).toFixed(1) + '%';
+            // عرض الإحصائيات
+            document.getElementById('requestsCount').textContent = systemData.messages.filter(m => m.type === 'طلب').length;
+            document.getElementById('complaintsCount').textContent = systemData.messages.filter(m => m.type === 'شكوى').length;
+            document.getElementById('suggestionsCount').textContent = systemData.messages.filter(m => m.type === 'اقتراح').length;
+            document.getElementById('reportsCount').textContent = systemData.messages.filter(m => m.type === 'تقرير').length;
             
-            document.getElementById('approvalRate').textContent = 
-                totalMessages ? ((approvedMessages / totalMessages) * 100).toFixed(1) + '%' : '0%';
-            
-            // حساب متوسط التقييم
-            let totalRating = 0;
-            let ratingCount = 0;
-            systemData.committees.forEach(c => {
-                if (c.ratings?.length) {
-                    totalRating += c.ratings.reduce((sum, r) => sum + r.rating, 0);
-                    ratingCount += c.ratings.length;
-                }
-            });
-            systemData.branches.forEach(b => {
-                if (b.ratings?.length) {
-                    totalRating += b.ratings.reduce((sum, r) => sum + r.rating, 0);
-                    ratingCount += b.ratings.length;
-                }
+            // عرض القائمة
+            let html = '';
+            items.forEach(item => {
+                html += `
+                    <tr onclick="showArchiveItem('${item.itemType}', '${item.id}')">
+                        <td>${item.number}</td>
+                        <td><span class="status-badge" style="background: ${getTypeColor(item.itemType)}20; color: ${getTypeColor(item.itemType)};">${item.itemType}</span></td>
+                        <td>${item.subject}</td>
+                        <td>${item.fromName}</td>
+                        <td>${new Date(item.date).toLocaleString('ar-EG')}</td>
+                        <td><span class="status-badge ${item.status === 'approved' || item.status === 'resolved' ? 'status-approved' : item.status === 'rejected' ? 'status-rejected' : 'status-pending'}">${item.status === 'approved' ? 'معتمد' : item.status === 'resolved' ? 'تم الحل' : item.status === 'rejected' ? 'مرفوض' : item.status === 'pending' ? 'قيد الانتظار' : item.status}</span></td>
+                    </tr>
+                `;
             });
             
-            document.getElementById('avgRating').textContent = 
-                ratingCount ? (totalRating / ratingCount).toFixed(1) : '0';
-            
-            document.getElementById('messagesStats').innerHTML = `
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;">
-                    <div style="text-align: center;">
-                        <div style="font-size: 36px; color: var(--primary);">${totalMessages}</div>
-                        <div>إجمالي المراسلات</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 36px; color: var(--success);">${approvedMessages}</div>
-                        <div>معتمدة</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 36px; color: var(--warning);">${pendingMessages}</div>
-                        <div>قيد الانتظار</div>
-                    </div>
-                    <div style="text-align: center;">
-                        <div style="font-size: 36px; color: var(--danger);">${rejectedMessages}</div>
-                        <div>مرفوضة</div>
-                    </div>
-                </div>
-            `;
+            document.getElementById('archiveList').innerHTML = html || '<tr><td colspan="6" style="text-align: center;">لا توجد بيانات</td></tr>';
+        }
+
+        function showArchiveItem(type, id) {
+            if (type === 'تقييم') {
+                const rating = systemData.ratings.find(r => r.id === id);
+                if (rating) {
+                    alert(`
+                        تقييم ${rating.entityName}
+                        من: ${rating.byName}
+                        التقييم: ${rating.rating} نجوم
+                        تعليق: ${rating.comment || 'لا يوجد'}
+                        التاريخ: ${new Date(rating.at).toLocaleString('ar-EG')}
+                    `);
+                }
+            } else if (type === 'قرار') {
+                const decision = systemData.decisions.find(d => d.id === id);
+                if (decision) {
+                    showDecisionDetails(decision.id);
+                }
+            } else {
+                const message = systemData.messages.find(m => m.id === id);
+                if (message) {
+                    showMessageDetails(message.id);
+                }
+            }
         }
 
         // ==================== الإعدادات الشخصية ====================
@@ -2591,6 +3109,14 @@
             systemData.settings.orgName = orgName;
             systemData.settings.memberStartNumber = parseInt(document.getElementById('memberStartNumber').value);
             
+            systemData.settings.prefixes = {
+                طلب: document.getElementById('requestPrefix').value,
+                شكوى: document.getElementById('complaintPrefix').value,
+                اقتراح: document.getElementById('suggestionPrefix').value,
+                تقرير: document.getElementById('reportPrefix').value,
+                قرار: document.getElementById('decisionPrefix').value
+            };
+            
             saveData();
             alert('تم حفظ الإعدادات');
         }
@@ -2616,8 +3142,6 @@
         // ==================== النوافذ المنبثقة ====================
         function openModal(modalId) {
             document.getElementById(modalId).classList.add('active');
-            
-            if (modalId === 'messageModal') populateMessageRecipients();
         }
 
         function closeModal(modalId) {
@@ -2651,6 +3175,13 @@
             
             document.getElementById('orgName').textContent = systemData.settings.orgName;
             document.getElementById('loginTitle').textContent = systemData.settings.orgName;
+            document.getElementById('orgNameInput').value = systemData.settings.orgName;
+            
+            document.getElementById('requestPrefix').value = systemData.settings.prefixes?.طلب || 'REQ';
+            document.getElementById('complaintPrefix').value = systemData.settings.prefixes?.شكوى || 'COM';
+            document.getElementById('suggestionPrefix').value = systemData.settings.prefixes?.اقتراح || 'SUG';
+            document.getElementById('reportPrefix').value = systemData.settings.prefixes?.تقرير || 'RPT';
+            document.getElementById('decisionPrefix').value = systemData.settings.prefixes?.قرار || 'DEC';
             
             if (systemData.settings.primaryColor) {
                 document.documentElement.style.setProperty('--primary', systemData.settings.primaryColor);
@@ -2678,35 +3209,22 @@
                     session.logoutTime = new Date().toISOString();
                 }
                 
+                systemData.currentUser = null;
                 saveData();
             }
             
             document.getElementById('appContainer').style.display = 'none';
             document.getElementById('loginScreen').style.display = 'flex';
+            
+            // مسح الرابط المباشر
+            window.location.hash = '';
         }
 
-        // ==================== بدء التشغيل ====================
-        window.onload = function() {
-            loadData();
-            
-            // التحقق من وجود مستخدم مسجل
-            if (systemData.currentUser) {
-                document.getElementById('loginScreen').style.display = 'none';
-                document.getElementById('appContainer').style.display = 'flex';
-                updateUI();
-                loadStats();
-                loadMembers();
-                loadMessages();
-                loadCommittees();
-                loadBranches();
-                loadOnlineUsers();
-                loadRecentActivities();
+        // منع فتح الرابط المباشر
+        window.onhashchange = function() {
+            if (window.location.hash) {
+                window.location.hash = '';
             }
-            
-            // تحديث التاريخ والوقت
-            setInterval(() => {
-                document.getElementById('currentDateTime').innerHTML = new Date().toLocaleString('ar-EG');
-            }, 1000);
         };
     </script>
 </body>
