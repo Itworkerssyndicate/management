@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>نقابة تكنولوجيا المعلومات - النظام الاداري</title>
+    <title>نقابة تكنولوجيا المعلومات - النظام المتكامل</title>
     
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,6 +30,7 @@
             --dark: #2c3e50;
             --text: #34495e;
             --border: #bdc3c7;
+            --gold: #f1c40f;
         }
 
         body {
@@ -525,6 +526,15 @@
             background: linear-gradient(135deg, var(--danger), #c0392b);
         }
 
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #e67e22);
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold), #f39c12);
+            color: var(--dark);
+        }
+
         /* النوافذ المنبثقة */
         .modal {
             display: none;
@@ -689,6 +699,16 @@
             color: var(--success);
         }
 
+        .status-paid {
+            background: rgba(46,204,113,0.1);
+            color: var(--success);
+        }
+
+        .status-unpaid {
+            background: rgba(231,76,60,0.1);
+            color: var(--danger);
+        }
+
         /* التبويبات */
         .tabs {
             display: flex;
@@ -781,29 +801,108 @@
             margin-top: 8px;
         }
 
-        /* تقييم النجوم */
-        .rating-stars {
+        /* رسائل التنبيه */
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            color: var(--primary);
+            padding: 15px 30px;
+            border-radius: 50px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            gap: 15px;
+            animation: slideDown 0.3s ease;
+            border-right: 5px solid var(--success);
+        }
+
+        .notification.show {
             display: flex;
-            gap: 5px;
-            direction: ltr;
         }
 
-        .rating-stars i {
+        .notification.error {
+            border-right-color: var(--danger);
+        }
+
+        .notification.warning {
+            border-right-color: var(--warning);
+        }
+
+        @keyframes slideDown {
+            from {
+                top: -100px;
+                opacity: 0;
+            }
+            to {
+                top: 20px;
+                opacity: 1;
+            }
+        }
+
+        .notification i {
             font-size: 24px;
-            cursor: pointer;
-            color: #bdc3c7;
-            transition: all 0.2s ease;
+            color: var(--success);
         }
 
-        .rating-stars i.active,
-        .rating-stars i:hover {
+        .notification.error i {
+            color: var(--danger);
+        }
+
+        .notification.warning i {
             color: var(--warning);
-            transform: scale(1.1);
+        }
+
+        .notification button {
+            background: none;
+            border: none;
+            color: var(--text);
+            font-weight: 600;
+            cursor: pointer;
+            padding: 5px 15px;
+            border-radius: 20px;
+            margin-right: 20px;
+        }
+
+        .notification button:hover {
+            background: #f0f0f0;
+        }
+
+        /* المبالغ المالية */
+        .amount {
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .amount.negative {
+            color: var(--danger);
+        }
+
+        .financial-summary {
+            background: linear-gradient(135deg, rgba(39,174,96,0.1), rgba(52,152,219,0.1));
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .financial-summary h3 {
+            color: var(--primary);
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
     <div class="gradient-bg"></div>
+
+    <!-- رسالة التنبيه -->
+    <div class="notification" id="notification">
+        <i class="fas fa-check-circle"></i>
+        <span id="notificationMessage">تم الحفظ بنجاح</span>
+        <button onclick="hideNotification()">حسناً</button>
+    </div>
 
     <!-- شاشة الدخول -->
     <div class="login-screen" id="loginScreen">
@@ -938,6 +1037,9 @@
                         <button class="btn" onclick="openMessageModal('تقرير')" style="background: linear-gradient(135deg, var(--accent), #2980b9);">
                             <i class="fas fa-file-alt"></i> تقرير جديد
                         </button>
+                        <button class="btn" onclick="openMessageModal('مأمورية')" style="background: linear-gradient(135deg, var(--gold), #f39c12); color: var(--dark);">
+                            <i class="fas fa-plane"></i> مأمورية جديدة
+                        </button>
                     </div>
                 </div>
 
@@ -947,6 +1049,7 @@
                     <div class="tab" onclick="filterMessages('شكوى')">الشكاوي</div>
                     <div class="tab" onclick="filterMessages('اقتراح')">الاقتراحات</div>
                     <div class="tab" onclick="filterMessages('تقرير')">التقارير</div>
+                    <div class="tab" onclick="filterMessages('مأمورية')">المأموريات</div>
                     <div class="tab" onclick="filterMessages('قرار')">القرارات</div>
                 </div>
 
@@ -961,6 +1064,7 @@
                                 <th>الموضوع</th>
                                 <th>التاريخ</th>
                                 <th>الحالة</th>
+                                <th>المبلغ</th>
                                 <th>التفاصيل</th>
                             </tr>
                         </thead>
@@ -991,6 +1095,69 @@
                             </tr>
                         </thead>
                         <tbody id="decisionsList"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- النظام المالي -->
+            <div id="financeSection" class="section">
+                <div class="section-header">
+                    <h2>النظام المالي</h2>
+                    <div>
+                        <button class="btn" onclick="generateFinancialReport()">
+                            <i class="fas fa-chart-pie"></i> تقرير مالي شامل
+                        </button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-wallet"></i></div>
+                        <div class="stat-info">
+                            <h3>إجمالي المبالغ</h3>
+                            <div class="number" id="totalAmount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3>المدفوع</h3>
+                            <div class="number" id="paidAmount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-info">
+                            <h3>المستحق</h3>
+                            <div class="number" id="pendingAmount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="financial-summary">
+                    <h3>ملخص المأموريات المالية</h3>
+                    <div id="financialSummary"></div>
+                </div>
+
+                <div class="section-header" style="margin-top: 20px;">
+                    <h3>المأموريات المالية</h3>
+                </div>
+
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>رقم المأمورية</th>
+                                <th>الموظف</th>
+                                <th>الجهة</th>
+                                <th>التاريخ</th>
+                                <th>المبلغ</th>
+                                <th>الحالة المالية</th>
+                                <th>معتمد من</th>
+                                <th>التفاصيل</th>
+                            </tr>
+                        </thead>
+                        <tbody id="financialMissionsList"></tbody>
                     </table>
                 </div>
             </div>
@@ -1032,6 +1199,7 @@
                             <option value="شكوى">شكاوي</option>
                             <option value="اقتراح">اقتراحات</option>
                             <option value="تقرير">تقارير</option>
+                            <option value="مأمورية">مأموريات</option>
                             <option value="قرار">قرارات</option>
                             <option value="تقييم">تقييمات</option>
                         </select>
@@ -1069,17 +1237,17 @@
                         </div>
                     </div>
                     <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-plane"></i></div>
+                        <div class="stat-info">
+                            <h3>المأموريات</h3>
+                            <div class="number" id="missionsCount">0</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
                         <div class="stat-icon"><i class="fas fa-gavel"></i></div>
                         <div class="stat-info">
                             <h3>القرارات</h3>
                             <div class="number" id="decisionsCount">0</div>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-star"></i></div>
-                        <div class="stat-info">
-                            <h3>التقييمات</h3>
-                            <div class="number" id="ratingsCount">0</div>
                         </div>
                     </div>
                 </div>
@@ -1093,6 +1261,7 @@
                                 <th>الموضوع</th>
                                 <th>من</th>
                                 <th>التاريخ</th>
+                                <th>المبلغ</th>
                                 <th>الحالة</th>
                             </tr>
                         </thead>
@@ -1213,6 +1382,10 @@
                         <input type="text" id="reportPrefix" value="RPT">
                     </div>
                     <div class="form-group">
+                        <label>بادئة المأموريات</label>
+                        <input type="text" id="missionPrefix" value="MIS">
+                    </div>
+                    <div class="form-group">
                         <label>بادئة القرارات</label>
                         <input type="text" id="decisionPrefix" value="DEC">
                     </div>
@@ -1260,6 +1433,8 @@
                     <option value="رئيس_فرع">رئيس فرع</option>
                     <option value="رئيس_اللجان">رئيس اللجان</option>
                     <option value="رئيس_الفروع">رئيس الفروع</option>
+                    <option value="امين_الصندوق">أمين الصندوق</option>
+                    <option value="مساعد_امين_الصندوق">مساعد أمين الصندوق</option>
                     <option value="النائب_الاول">النائب الأول</option>
                     <option value="النقيب">النقيب</option>
                 </select>
@@ -1308,6 +1483,17 @@
                 </select>
             </div>
 
+            <div class="form-group" id="missionAmountGroup" style="display: none;">
+                <label>المبلغ</label>
+                <input type="number" id="missionAmount" step="0.01" placeholder="المبلغ المطلوب">
+            </div>
+
+            <div class="form-group" id="missionHasAmountGroup" style="display: none;">
+                <label>
+                    <input type="checkbox" id="missionHasAmount" onchange="toggleMissionAmount()"> له مقابل مالي
+                </label>
+            </div>
+
             <button class="btn" style="width: 100%;" onclick="sendMessage()">إرسال</button>
         </div>
     </div>
@@ -1336,8 +1522,11 @@
                     <option value="vp">👤 النائب الأول</option>
                     <option value="head_committees">👥 رئيس اللجان</option>
                     <option value="head_branches">👥 رئيس الفروع</option>
+                    <option value="treasurer">💰 أمين الصندوق</option>
+                    <option value="assistant_treasurer">💰 مساعد أمين الصندوق</option>
                     <option value="heads">👥 رؤساء اللجان والفروع</option>
                     <option value="heads_vp">👥 رؤساء اللجان والفروع + النائب</option>
+                    <option value="financial">💰 اللجنة المالية</option>
                 </select>
             </div>
 
@@ -1402,6 +1591,10 @@
             <div style="margin-top: 20px;" id="approvalActions">
                 <!-- هتتحط هنا أزرار الاعتماد حسب النوع -->
             </div>
+
+            <div style="margin-top: 20px;" id="financialActions">
+                <!-- هتتحط هنا أزرار المأموريات المالية -->
+            </div>
         </div>
     </div>
 
@@ -1434,6 +1627,36 @@
     </div>
 
     <script>
+        // ==================== نظام الرسائل ====================
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageEl = document.getElementById('notificationMessage');
+            const icon = notification.querySelector('i');
+            
+            messageEl.textContent = message;
+            notification.className = 'notification';
+            if (type === 'error') {
+                notification.classList.add('error');
+                icon.className = 'fas fa-times-circle';
+            } else if (type === 'warning') {
+                notification.classList.add('warning');
+                icon.className = 'fas fa-exclamation-triangle';
+            } else {
+                icon.className = 'fas fa-check-circle';
+            }
+            
+            notification.classList.add('show');
+            
+            // إخفاء تلقائي بعد 3 ثواني
+            setTimeout(() => {
+                hideNotification();
+            }, 3000);
+        }
+
+        function hideNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+
         // ==================== تهيئة النظام ====================
         let systemData = {
             members: [],
@@ -1443,6 +1666,10 @@
             branches: [],
             ratings: [],
             sessions: [],
+            financial: {
+                missions: [],
+                payments: []
+            },
             settings: {
                 memberStartNumber: 1,
                 lastMemberId: 0,
@@ -1456,6 +1683,7 @@
                     شكوى: 'COM',
                     اقتراح: 'SUG',
                     تقرير: 'RPT',
+                    مأمورية: 'MIS',
                     قرار: 'DEC'
                 }
             },
@@ -1469,7 +1697,7 @@
 
         // تحميل البيانات
         function loadData() {
-            const saved = localStorage.getItem('nokabaSystemV3');
+            const saved = localStorage.getItem('nokabaSystemV4');
             if (saved) {
                 try {
                     systemData = JSON.parse(saved);
@@ -1483,6 +1711,7 @@
             systemData.branches = systemData.branches || [];
             systemData.ratings = systemData.ratings || [];
             systemData.sessions = systemData.sessions || [];
+            systemData.financial = systemData.financial || { missions: [], payments: [] };
             systemData.settings = systemData.settings || { 
                 memberStartNumber: 1, 
                 lastMemberId: 0,
@@ -1496,11 +1725,12 @@
                     شكوى: 'COM',
                     اقتراح: 'SUG',
                     تقرير: 'RPT',
+                    مأمورية: 'MIS',
                     قرار: 'DEC'
                 }
             };
             
-            // إنشاء حساب النقيب إذا لم يكن موجوداً
+            // إنشاء حسابات النظام إذا لم تكن موجودة
             if (!systemData.members.find(m => m.role === 'النقيب')) {
                 systemData.members.push({
                     id: 'ng-1',
@@ -1565,12 +1795,44 @@
                     lastLogout: null,
                     online: false
                 });
+                
+                systemData.members.push({
+                    id: 'tr-1',
+                    memberId: '5',
+                    name: 'محمود أمين الصندوق',
+                    email: 'treasurer@nokaba.com',
+                    password: '123456',
+                    role: 'امين_الصندوق',
+                    title: 'أمين الصندوق',
+                    image: null,
+                    entity: null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    lastLogout: null,
+                    online: false
+                });
+                
+                systemData.members.push({
+                    id: 'at-1',
+                    memberId: '6',
+                    name: 'نادية مساعد أمين الصندوق',
+                    email: 'assistant.treasurer@nokaba.com',
+                    password: '123456',
+                    role: 'مساعد_امين_الصندوق',
+                    title: 'مساعد أمين الصندوق',
+                    image: null,
+                    entity: null,
+                    createdAt: new Date().toISOString(),
+                    lastLogin: null,
+                    lastLogout: null,
+                    online: false
+                });
             }
         }
 
         // حفظ البيانات
         function saveData() {
-            localStorage.setItem('nokabaSystemV3', JSON.stringify(systemData));
+            localStorage.setItem('nokabaSystemV4', JSON.stringify(systemData));
         }
 
         // ==================== شاشة الدخول ====================
@@ -1610,12 +1872,15 @@
                 loadOnlineUsers();
                 loadRecentActivities();
                 loadReports();
+                loadFinancialData();
                 
                 // تفريغ حقول الدخول
                 document.getElementById('loginEmail').value = '';
                 document.getElementById('loginPassword').value = '';
+                
+                showNotification('مرحباً بك ' + user.name, 'success');
             } else {
-                alert('❌ البريد الإلكتروني أو كلمة المرور غير صحيحة');
+                showNotification('❌ البريد الإلكتروني أو كلمة المرور غير صحيحة', 'error');
             }
         }
 
@@ -1637,6 +1902,9 @@
                 loadOnlineUsers();
                 loadRecentActivities();
                 loadReports();
+                loadFinancialData();
+                
+                showNotification('مرحباً بعودتك ' + systemData.currentUser.name, 'success');
             }
             
             // تحديث التاريخ والوقت
@@ -1664,6 +1932,13 @@
             menu += `
                 <div class="menu-item" onclick="showSection('decisionsSection')">
                     <i class="fas fa-gavel"></i> القرارات
+                </div>
+            `;
+            
+            // النظام المالي للكل
+            menu += `
+                <div class="menu-item" onclick="showSection('financeSection')">
+                    <i class="fas fa-coins"></i> النظام المالي
                 </div>
             `;
             
@@ -1736,6 +2011,18 @@
                 `;
             }
             
+            // أمين الصندوق
+            if (user.role === 'امين_الصندوق' || user.role === 'مساعد_امين_الصندوق') {
+                menu += `
+                    <div class="menu-item" onclick="showSection('financeSection')">
+                        <i class="fas fa-coins"></i> النظام المالي
+                    </div>
+                    <div class="menu-item" onclick="showSection('reportsSection')">
+                        <i class="fas fa-chart-pie"></i> التقارير المالية
+                    </div>
+                `;
+            }
+            
             // الإعدادات الشخصية للكل
             menu += `
                 <div class="menu-item" onclick="showSection('profileSettingsSection')">
@@ -1760,6 +2047,7 @@
             if (sectionId === 'membersSection') loadMembers();
             if (sectionId === 'messagesSection') loadMessages();
             if (sectionId === 'decisionsSection') loadDecisions();
+            if (sectionId === 'financeSection') loadFinancialData();
             if (sectionId === 'committeesSection') loadCommittees();
             if (sectionId === 'branchesSection') loadBranches();
             if (sectionId === 'reportsSection') loadReports();
@@ -1802,6 +2090,15 @@
                 !m.read?.includes(user.id)
             ).length;
             
+            // إجمالي المبالغ المالية
+            const totalAmount = systemData.messages
+                .filter(m => m.type === 'مأمورية' && m.amount)
+                .reduce((sum, m) => sum + (parseFloat(m.amount) || 0), 0);
+            
+            const paidAmount = systemData.messages
+                .filter(m => m.type === 'مأمورية' && m.financialStatus === 'paid')
+                .reduce((sum, m) => sum + (parseFloat(m.amount) || 0), 0);
+            
             stats += `
                 <div class="stat-card" onclick="showSection('messagesSection')">
                     <div class="stat-icon"><i class="fas fa-envelope"></i></div>
@@ -1810,11 +2107,11 @@
                         <div class="number">${systemData.messages.length}</div>
                     </div>
                 </div>
-                <div class="stat-card" onclick="showSection('messagesSection')">
-                    <div class="stat-icon"><i class="fas fa-envelope-open"></i></div>
+                <div class="stat-card" onclick="showSection('financeSection')">
+                    <div class="stat-icon"><i class="fas fa-coins"></i></div>
                     <div class="stat-info">
-                        <h3>غير مقروء</h3>
-                        <div class="number">${unreadMessages}</div>
+                        <h3>إجمالي المبالغ</h3>
+                        <div class="number">${totalAmount.toFixed(2)}</div>
                     </div>
                 </div>
             `;
@@ -1917,6 +2214,8 @@
                        document.getElementById('memberRole').value === 'رئيس_فرع' ? 'رئيس فرع' :
                        document.getElementById('memberRole').value === 'رئيس_اللجان' ? 'رئيس اللجان' :
                        document.getElementById('memberRole').value === 'رئيس_الفروع' ? 'رئيس الفروع' :
+                       document.getElementById('memberRole').value === 'امين_الصندوق' ? 'أمين الصندوق' :
+                       document.getElementById('memberRole').value === 'مساعد_امين_الصندوق' ? 'مساعد أمين الصندوق' :
                        document.getElementById('memberRole').value === 'النائب_الاول' ? 'النائب الأول' :
                        'النقيب العام',
                 image: null,
@@ -1950,7 +2249,7 @@
                     closeModal('memberModal');
                     loadMembers();
                     loadStats();
-                    alert(`تم تسجيل العضو برقم عضوية: ${member.memberId}`);
+                    showNotification(`تم تسجيل العضو برقم عضوية: ${member.memberId}`, 'success');
                 };
                 reader.readAsDataURL(imageFile);
             } else {
@@ -1973,7 +2272,7 @@
                 closeModal('memberModal');
                 loadMembers();
                 loadStats();
-                alert(`تم تسجيل العضو برقم عضوية: ${member.memberId}`);
+                showNotification(`تم تسجيل العضو برقم عضوية: ${member.memberId}`, 'success');
             }
         }
 
@@ -2029,7 +2328,7 @@
 
         function deleteMember(id) {
             if (systemData.currentUser.role !== 'النقيب') {
-                alert('ليس لديك صلاحية للحذف');
+                showNotification('ليس لديك صلاحية للحذف', 'error');
                 return;
             }
             
@@ -2038,6 +2337,7 @@
                 saveData();
                 loadMembers();
                 loadStats();
+                showNotification('تم حذف العضو بنجاح', 'success');
             }
         }
 
@@ -2046,14 +2346,26 @@
             document.getElementById('messageModalTitle').textContent = type + ' جديد';
             document.getElementById('messageType').value = type;
             
-            if (type === 'تقرير') {
-                document.getElementById('reportPeriodGroup').style.display = 'block';
+            document.getElementById('reportPeriodGroup').style.display = type === 'تقرير' ? 'block' : 'none';
+            
+            if (type === 'مأمورية') {
+                document.getElementById('missionHasAmountGroup').style.display = 'block';
+                document.getElementById('missionAmountGroup').style.display = 'none';
             } else {
-                document.getElementById('reportPeriodGroup').style.display = 'none';
+                document.getElementById('missionHasAmountGroup').style.display = 'none';
+                document.getElementById('missionAmountGroup').style.display = 'none';
             }
             
             populateMessageRecipients();
             openModal('messageModal');
+        }
+
+        function toggleMissionAmount() {
+            if (document.getElementById('missionHasAmount').checked) {
+                document.getElementById('missionAmountGroup').style.display = 'block';
+            } else {
+                document.getElementById('missionAmountGroup').style.display = 'none';
+            }
         }
 
         function populateMessageRecipients() {
@@ -2083,6 +2395,15 @@
                     const option = document.createElement('option');
                     option.value = `branch_${b.id}`;
                     option.textContent = `🏢 فرع: ${b.name}`;
+                    select.appendChild(option);
+                });
+                
+                // إضافة المالية
+                const treasurers = systemData.members.filter(m => m.role === 'امين_الصندوق' || m.role === 'مساعد_امين_الصندوق');
+                treasurers.forEach(t => {
+                    const option = document.createElement('option');
+                    option.value = t.id;
+                    option.textContent = `💰 ${t.name} (${t.title})`;
                     select.appendChild(option);
                 });
             } 
@@ -2160,6 +2481,28 @@
                 option.textContent = '👤 رئيس الفروع';
                 select.appendChild(option);
             }
+            else if (user.role === 'امين_الصندوق' || user.role === 'مساعد_امين_الصندوق') {
+                // يبعت للنقيب والنائب
+                const option = document.createElement('option');
+                option.value = 'boss';
+                option.textContent = '👑 النقيب العام';
+                select.appendChild(option);
+                
+                option = document.createElement('option');
+                option.value = 'vp';
+                option.textContent = '👤 النائب الأول';
+                select.appendChild(option);
+                
+                option = document.createElement('option');
+                option.value = 'head_committees';
+                option.textContent = '👤 رئيس اللجان';
+                select.appendChild(option);
+                
+                option = document.createElement('option');
+                option.value = 'head_branches';
+                option.textContent = '👤 رئيس الفروع';
+                select.appendChild(option);
+            }
         }
 
         function sendMessage() {
@@ -2182,6 +2525,9 @@
                 subject: document.getElementById('messageSubject').value,
                 content: document.getElementById('messageContent').value,
                 period: document.getElementById('reportPeriod')?.value || null,
+                amount: document.getElementById('missionHasAmount')?.checked ? parseFloat(document.getElementById('missionAmount')?.value) : null,
+                hasAmount: document.getElementById('missionHasAmount')?.checked || false,
+                financialStatus: 'pending',
                 date: new Date().toISOString(),
                 status: 'pending',
                 approved: false,
@@ -2205,8 +2551,9 @@
             closeModal('messageModal');
             loadMessages();
             loadStats();
+            loadFinancialData();
             
-            alert(`تم الإرسال برقم: ${trackingNumber}`);
+            showNotification(`تم الإرسال برقم: ${trackingNumber}`, 'success');
         }
 
         function loadMessages(filter = 'all') {
@@ -2249,6 +2596,11 @@
                         m.to?.some(t => t.startsWith('branch_'))) return true;
                 }
                 
+                // أمين الصندوق يشوف المأموريات المالية
+                if (user.role === 'امين_الصندوق' || user.role === 'مساعد_امين_الصندوق') {
+                    if (m.type === 'مأمورية') return true;
+                }
+                
                 return false;
             });
             
@@ -2269,6 +2621,15 @@
                     toText = m.to;
                 }
                 
+                let amountDisplay = '';
+                if (m.amount) {
+                    amountDisplay = `<span class="amount">${m.amount} ج.م</span>`;
+                } else if (m.type === 'مأمورية') {
+                    amountDisplay = '<span class="status-badge status-pending">بدون مقابل</span>';
+                } else {
+                    amountDisplay = '—';
+                }
+                
                 html += `
                     <tr onclick="showMessageDetails('${m.id}')" style="${!isRead && m.from !== user.id ? 'font-weight: bold; background: rgba(52,152,219,0.05);' : ''}">
                         <td>${m.trackingNumber}</td>
@@ -2278,6 +2639,7 @@
                         <td>${m.subject}</td>
                         <td>${new Date(m.date).toLocaleString('ar-EG')}</td>
                         <td><span class="status-badge ${m.status === 'pending' ? 'status-pending' : m.status === 'approved' ? 'status-approved' : m.status === 'rejected' ? 'status-rejected' : 'status-in-progress'}">${m.status === 'pending' ? 'قيد الانتظار' : m.status === 'approved' ? 'معتمد' : m.status === 'rejected' ? 'مرفوض' : 'قيد المعالجة'}</span></td>
+                        <td>${amountDisplay}</td>
                         <td><i class="fas fa-eye" style="color: var(--accent);"></i></td>
                     </tr>
                 `;
@@ -2302,6 +2664,7 @@
                 'شكوى': '#e74c3c',
                 'اقتراح': '#f39c12',
                 'تقرير': '#27ae60',
+                'مأمورية': '#f1c40f',
                 'قرار': '#9b59b6'
             };
             return colors[type] || '#3498db';
@@ -2340,7 +2703,8 @@
                         const b = systemData.branches.find(b => b.id === t.replace('branch_', ''));
                         return `فرع: ${b?.name}`;
                     }
-                    return t;
+                    const member = systemData.members.find(m => m.id === t);
+                    return member ? member.name : t;
                 }).join('، ');
             } else {
                 toText = message.to;
@@ -2387,7 +2751,10 @@
                     <p><strong>الموضوع:</strong> ${message.subject}</p>
                     <p><strong>المحتوى:</strong> ${message.content}</p>
                     ${message.period ? `<p><strong>الفترة:</strong> ${message.period}</p>` : ''}
+                    ${message.amount ? `<p><strong>المبلغ:</strong> <span class="amount">${message.amount} ج.م</span></p>` : ''}
+                    ${message.hasAmount ? '<p><strong>له مقابل مالي</strong></p>' : ''}
                     <p><strong>الحالة:</strong> <span class="status-badge ${message.status === 'pending' ? 'status-pending' : message.status === 'approved' ? 'status-approved' : message.status === 'rejected' ? 'status-rejected' : 'status-in-progress'}">${message.status === 'pending' ? 'قيد الانتظار' : message.status === 'approved' ? 'معتمد' : message.status === 'rejected' ? 'مرفوض' : 'قيد المعالجة'}</span></p>
+                    ${message.financialStatus ? `<p><strong>الحالة المالية:</strong> <span class="status-badge ${message.financialStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">${message.financialStatus === 'paid' ? 'تم الصرف' : 'في الانتظار'}</span></p>` : ''}
                     ${message.approvalNumber ? `<p><strong>رقم القرار:</strong> ${message.approvalNumber}</p>` : ''}
                     ${message.rejectionReason ? `<p><strong>سبب الرفض:</strong> ${message.rejectionReason}</p>` : ''}
                 </div>
@@ -2397,6 +2764,7 @@
             
             // إضافة أزرار الاعتماد حسب الصلاحية والنوع
             let actions = '';
+            let financialActions = '';
             const user = systemData.currentUser;
             
             if (user.role === 'النقيب' && message.status === 'pending') {
@@ -2424,14 +2792,31 @@
                 `;
             }
             
+            // أزرار المالية للمأموريات
+            if (message.type === 'مأمورية' && message.hasAmount) {
+                if (user.role === 'امين_الصندوق' && message.financialStatus === 'pending') {
+                    financialActions += `
+                        <button class="btn" onclick="approveFinancial('${message.id}')" style="background: var(--success);">💰 صرف المبلغ</button>
+                    `;
+                } else if (user.role === 'مساعد_امين_الصندوق' && message.financialStatus === 'pending') {
+                    financialActions += `
+                        <button class="btn" onclick="forwardToTreasurer('${message.id}')" style="background: var(--accent);">📨 تحويل لأمين الصندوق</button>
+                    `;
+                }
+            }
+            
             document.getElementById('approvalActions').innerHTML = actions;
+            document.getElementById('financialActions').innerHTML = financialActions;
             
             openModal('messageDetailsModal');
         }
 
         function addComment() {
             const comment = document.getElementById('commentContent').value;
-            if (!comment) return;
+            if (!comment) {
+                showNotification('الرجاء كتابة تعليق', 'warning');
+                return;
+            }
             
             const message = systemData.messages.find(m => m.id === currentMessageId);
             if (!message) return;
@@ -2457,6 +2842,7 @@
             saveData();
             document.getElementById('commentContent').value = '';
             showMessageDetails(currentMessageId);
+            showNotification('تم إضافة التعليق', 'success');
         }
 
         function approveMessage(messageId) {
@@ -2494,7 +2880,7 @@
             showMessageDetails(messageId);
             loadMessages();
             loadDecisions();
-            alert(`تم الاعتماد برقم قرار: ${message.approvalNumber}`);
+            showNotification(`تم الاعتماد برقم قرار: ${message.approvalNumber}`, 'success');
         }
 
         function rejectMessage(messageId) {
@@ -2518,6 +2904,7 @@
             saveData();
             showMessageDetails(messageId);
             loadMessages();
+            showNotification('تم رفض المعاملة', 'warning');
         }
 
         function startProcessing(messageId) {
@@ -2537,6 +2924,7 @@
             saveData();
             showMessageDetails(messageId);
             loadMessages();
+            showNotification('تم بدء معالجة الشكوى', 'success');
         }
 
         function resolveComplaint(messageId) {
@@ -2556,6 +2944,139 @@
             saveData();
             showMessageDetails(messageId);
             loadMessages();
+            showNotification('تم حل الشكوى', 'success');
+        }
+
+        function approveFinancial(messageId) {
+            const message = systemData.messages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            message.financialStatus = 'paid';
+            message.paidAt = new Date().toISOString();
+            message.paidBy = systemData.currentUser.id;
+            
+            message.history.push({
+                action: 'تم صرف المبلغ',
+                by: systemData.currentUser.id,
+                byName: systemData.currentUser.name,
+                at: new Date().toISOString(),
+                comment: 'تم صرف مبلغ ' + message.amount + ' ج.م'
+            });
+            
+            saveData();
+            showMessageDetails(messageId);
+            loadMessages();
+            loadFinancialData();
+            showNotification('تم صرف المبلغ بنجاح', 'success');
+        }
+
+        function forwardToTreasurer(messageId) {
+            const message = systemData.messages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            message.financialStatus = 'treasurer_pending';
+            
+            message.history.push({
+                action: 'تم التحويل لأمين الصندوق',
+                by: systemData.currentUser.id,
+                byName: systemData.currentUser.name,
+                at: new Date().toISOString(),
+                comment: 'تم تحويل المأمورية لأمين الصندوق للاعتماد المالي'
+            });
+            
+            saveData();
+            showMessageDetails(messageId);
+            loadMessages();
+            showNotification('تم التحويل لأمين الصندوق', 'success');
+        }
+
+        // ==================== النظام المالي ====================
+        function loadFinancialData() {
+            const missions = systemData.messages.filter(m => m.type === 'مأمورية');
+            
+            const totalAmount = missions
+                .filter(m => m.amount)
+                .reduce((sum, m) => sum + (parseFloat(m.amount) || 0), 0);
+            
+            const paidAmount = missions
+                .filter(m => m.financialStatus === 'paid')
+                .reduce((sum, m) => sum + (parseFloat(m.amount) || 0), 0);
+            
+            const pendingAmount = missions
+                .filter(m => m.amount && m.financialStatus !== 'paid')
+                .reduce((sum, m) => sum + (parseFloat(m.amount) || 0), 0);
+            
+            document.getElementById('totalAmount').textContent = totalAmount.toFixed(2) + ' ج.م';
+            document.getElementById('paidAmount').textContent = paidAmount.toFixed(2) + ' ج.م';
+            document.getElementById('pendingAmount').textContent = pendingAmount.toFixed(2) + ' ج.م';
+            
+            // ملخص المأموريات
+            let summaryHtml = '<div style="display: grid; gap: 10px;">';
+            
+            missions.forEach(m => {
+                const fromUser = systemData.members.find(mem => mem.id === m.from);
+                summaryHtml += `
+                    <div style="display: flex; justify-content: space-between; padding: 10px; background: white; border-radius: 8px;">
+                        <span>${m.trackingNumber} - ${fromUser?.name}</span>
+                        <span class="${m.financialStatus === 'paid' ? 'amount' : 'amount negative'}">${m.amount ? m.amount + ' ج.م' : 'بدون مقابل'}</span>
+                        <span class="status-badge ${m.financialStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">${m.financialStatus === 'paid' ? 'تم الصرف' : 'في الانتظار'}</span>
+                    </div>
+                `;
+            });
+            
+            summaryHtml += '</div>';
+            document.getElementById('financialSummary').innerHTML = summaryHtml || '<p>لا توجد مأموريات مالية</p>';
+            
+            // قائمة المأموريات المالية
+            const tbody = document.getElementById('financialMissionsList');
+            if (tbody) {
+                let html = '';
+                missions.reverse().forEach(m => {
+                    const fromUser = systemData.members.find(mem => mem.id === m.from);
+                    const approvedBy = m.paidBy ? systemData.members.find(mem => mem.id === m.paidBy) : null;
+                    
+                    html += `
+                        <tr onclick="showMessageDetails('${m.id}')">
+                            <td>${m.trackingNumber}</td>
+                            <td>${fromUser?.name}</td>
+                            <td>${fromUser?.title}</td>
+                            <td>${new Date(m.date).toLocaleDateString('ar-EG')}</td>
+                            <td class="${m.amount ? 'amount' : ''}">${m.amount ? m.amount + ' ج.م' : '—'}</td>
+                            <td><span class="status-badge ${m.financialStatus === 'paid' ? 'status-paid' : 'status-unpaid'}">${m.financialStatus === 'paid' ? 'تم الصرف' : 'في الانتظار'}</span></td>
+                            <td>${approvedBy?.name || '—'}</td>
+                            <td><i class="fas fa-eye"></i></td>
+                        </tr>
+                    `;
+                });
+                tbody.innerHTML = html || '<tr><td colspan="8">لا توجد مأموريات</td></tr>';
+            }
+        }
+
+        function generateFinancialReport() {
+            const missions = systemData.messages.filter(m => m.type === 'مأمورية' && m.amount);
+            
+            let report = 'تقرير مالي شامل\n';
+            report += '==================\n\n';
+            
+            let total = 0;
+            missions.forEach(m => {
+                const fromUser = systemData.members.find(mem => mem.id === m.from);
+                report += `المأمورية: ${m.trackingNumber}\n`;
+                report += `الموظف: ${fromUser?.name}\n`;
+                report += `المبلغ: ${m.amount} ج.م\n`;
+                report += `الحالة: ${m.financialStatus === 'paid' ? 'تم الصرف' : 'في الانتظار'}\n`;
+                if (m.financialStatus === 'paid') {
+                    const paidBy = systemData.members.find(mem => mem.id === m.paidBy);
+                    report += `صرف بواسطة: ${paidBy?.name}\n`;
+                    report += `تاريخ الصرف: ${new Date(m.paidAt).toLocaleString('ar-EG')}\n`;
+                }
+                report += '------------------\n';
+                total += parseFloat(m.amount) || 0;
+            });
+            
+            report += `\nالإجمالي الكلي: ${total.toFixed(2)} ج.م`;
+            
+            alert(report);
         }
 
         // ==================== إدارة القرارات ====================
@@ -2601,7 +3122,7 @@
             closeModal('decisionModal');
             loadDecisions();
             loadMessages();
-            alert(`تم إصدار القرار برقم: ${decision.number}`);
+            showNotification(`تم إصدار القرار برقم: ${decision.number}`, 'success');
         }
 
         function loadDecisions() {
@@ -2615,8 +3136,11 @@
                 else if (d.to === 'vp') toText = 'النائب الأول';
                 else if (d.to === 'head_committees') toText = 'رئيس اللجان';
                 else if (d.to === 'head_branches') toText = 'رئيس الفروع';
+                else if (d.to === 'treasurer') toText = 'أمين الصندوق';
+                else if (d.to === 'assistant_treasurer') toText = 'مساعد أمين الصندوق';
                 else if (d.to === 'heads') toText = 'رؤساء اللجان والفروع';
                 else if (d.to === 'heads_vp') toText = 'رؤساء اللجان والفروع + النائب';
+                else if (d.to === 'financial') toText = 'اللجنة المالية';
                 
                 html += `
                     <tr onclick="showDecisionDetails('${d.id}')">
@@ -2652,10 +3176,22 @@
                 `;
             });
             
+            let toText = '';
+            if (decision.to === 'all') toText = 'الجميع';
+            else if (decision.to === 'vp') toText = 'النائب الأول';
+            else if (decision.to === 'head_committees') toText = 'رئيس اللجان';
+            else if (decision.to === 'head_branches') toText = 'رئيس الفروع';
+            else if (decision.to === 'treasurer') toText = 'أمين الصندوق';
+            else if (decision.to === 'assistant_treasurer') toText = 'مساعد أمين الصندوق';
+            else if (decision.to === 'heads') toText = 'رؤساء اللجان والفروع';
+            else if (decision.to === 'heads_vp') toText = 'رؤساء اللجان والفروع + النائب';
+            else if (decision.to === 'financial') toText = 'اللجنة المالية';
+            
             alert(`
                 رقم القرار: ${decision.number}
                 الموضوع: ${decision.subject}
                 من: ${decision.fromName}
+                إلى: ${toText}
                 المحتوى: ${decision.content}
                 التاريخ: ${new Date(decision.date).toLocaleString('ar-EG')}
                 
@@ -2681,6 +3217,7 @@
             
             closeModal('committeeModal');
             loadCommittees();
+            showNotification('تم إضافة اللجنة بنجاح', 'success');
         }
 
         function loadCommittees() {
@@ -2730,6 +3267,7 @@
             
             closeModal('branchModal');
             loadBranches();
+            showNotification('تم إضافة الفرع بنجاح', 'success');
         }
 
         function loadBranches() {
@@ -2797,7 +3335,7 @@
 
         function submitRating() {
             if (!currentRatingValue) {
-                alert('الرجاء اختيار التقييم');
+                showNotification('الرجاء اختيار التقييم', 'warning');
                 return;
             }
             
@@ -2831,6 +3369,7 @@
             saveData();
             
             closeModal('ratingModal');
+            showNotification('تم حفظ التقييم', 'success');
             
             if (currentRatingType === 'committee') {
                 loadCommitteeRatings();
@@ -2965,7 +3504,7 @@
                 })));
             }
             
-            if (type === 'all' || ['طلب', 'شكوى', 'اقتراح', 'تقرير'].includes(type)) {
+            if (type === 'all' || ['طلب', 'شكوى', 'اقتراح', 'تقرير', 'مأمورية'].includes(type)) {
                 items = items.concat(systemData.messages
                     .filter(m => type === 'all' || m.type === type)
                     .map(m => ({
@@ -2975,6 +3514,7 @@
                         subject: m.subject,
                         fromName: m.fromName,
                         date: m.date,
+                        amount: m.amount,
                         status: m.status
                     })));
             }
@@ -2995,10 +3535,18 @@
             document.getElementById('complaintsCount').textContent = systemData.messages.filter(m => m.type === 'شكوى').length;
             document.getElementById('suggestionsCount').textContent = systemData.messages.filter(m => m.type === 'اقتراح').length;
             document.getElementById('reportsCount').textContent = systemData.messages.filter(m => m.type === 'تقرير').length;
+            document.getElementById('missionsCount').textContent = systemData.messages.filter(m => m.type === 'مأمورية').length;
             
             // عرض القائمة
             let html = '';
             items.forEach(item => {
+                let amountDisplay = '';
+                if (item.amount) {
+                    amountDisplay = `<span class="amount">${item.amount} ج.م</span>`;
+                } else {
+                    amountDisplay = '—';
+                }
+                
                 html += `
                     <tr onclick="showArchiveItem('${item.itemType}', '${item.id}')">
                         <td>${item.number}</td>
@@ -3006,12 +3554,13 @@
                         <td>${item.subject}</td>
                         <td>${item.fromName}</td>
                         <td>${new Date(item.date).toLocaleString('ar-EG')}</td>
+                        <td>${amountDisplay}</td>
                         <td><span class="status-badge ${item.status === 'approved' || item.status === 'resolved' ? 'status-approved' : item.status === 'rejected' ? 'status-rejected' : 'status-pending'}">${item.status === 'approved' ? 'معتمد' : item.status === 'resolved' ? 'تم الحل' : item.status === 'rejected' ? 'مرفوض' : item.status === 'pending' ? 'قيد الانتظار' : item.status}</span></td>
                     </tr>
                 `;
             });
             
-            document.getElementById('archiveList').innerHTML = html || '<tr><td colspan="6" style="text-align: center;">لا توجد بيانات</td></tr>';
+            document.getElementById('archiveList').innerHTML = html || '<tr><td colspan="7" style="text-align: center;">لا توجد بيانات</td></tr>';
         }
 
         function showArchiveItem(type, id) {
@@ -3060,14 +3609,14 @@
                 if (newPass === confirmPass) {
                     user.password = newPass;
                 } else {
-                    alert('كلمة المرور غير متطابقة');
+                    showNotification('كلمة المرور غير متطابقة', 'error');
                     return;
                 }
             }
             
             saveData();
             updateUI();
-            alert('تم حفظ التغييرات');
+            showNotification('تم حفظ التغييرات', 'success');
         }
 
         // ==================== إعدادات النظام (للنقيب فقط) ====================
@@ -3085,6 +3634,7 @@
                     
                     systemData.settings.logo = e.target.result;
                     saveData();
+                    showNotification('تم تغيير الشعار', 'success');
                 };
                 reader.readAsDataURL(input.files[0]);
             }
@@ -3099,6 +3649,7 @@
             systemData.settings.secondaryColor = secondary;
             systemData.settings.accentColor = accent;
             saveData();
+            showNotification('تم تغيير ألوان النظام', 'success');
         }
 
         function saveSystemSettings() {
@@ -3114,11 +3665,12 @@
                 شكوى: document.getElementById('complaintPrefix').value,
                 اقتراح: document.getElementById('suggestionPrefix').value,
                 تقرير: document.getElementById('reportPrefix').value,
+                مأمورية: document.getElementById('missionPrefix').value,
                 قرار: document.getElementById('decisionPrefix').value
             };
             
             saveData();
-            alert('تم حفظ الإعدادات');
+            showNotification('تم حفظ الإعدادات', 'success');
         }
 
         // ==================== الصور ====================
@@ -3133,6 +3685,7 @@
                     if (systemData.currentUser) {
                         systemData.currentUser.image = e.target.result;
                         saveData();
+                        showNotification('تم تغيير الصورة الشخصية', 'success');
                     }
                 };
                 reader.readAsDataURL(input.files[0]);
@@ -3181,6 +3734,7 @@
             document.getElementById('complaintPrefix').value = systemData.settings.prefixes?.شكوى || 'COM';
             document.getElementById('suggestionPrefix').value = systemData.settings.prefixes?.اقتراح || 'SUG';
             document.getElementById('reportPrefix').value = systemData.settings.prefixes?.تقرير || 'RPT';
+            document.getElementById('missionPrefix').value = systemData.settings.prefixes?.مأمورية || 'MIS';
             document.getElementById('decisionPrefix').value = systemData.settings.prefixes?.قرار || 'DEC';
             
             if (systemData.settings.primaryColor) {
@@ -3211,6 +3765,7 @@
                 
                 systemData.currentUser = null;
                 saveData();
+                showNotification('تم تسجيل الخروج بنجاح', 'success');
             }
             
             document.getElementById('appContainer').style.display = 'none';
