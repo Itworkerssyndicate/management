@@ -3,354 +3,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة نقابة تكنولوجيا المعلومات - النظام الإداري</title>
+    <title>منصة ITWS - الإدارة المتكاملة</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <style>
         :root {
-            --primary-color: #1e3a8a; /* أزرق داكن */
-            --secondary-color: #3b82f6;
-            --accent-color: #10b981;
-            --bg-color: #f8fafc;
-            --text-color: #1e293b;
+            --primary: #0f172a;
+            --accent: #3b82f6;
+            --glass: rgba(255, 255, 255, 0.95);
             --danger: #ef4444;
-            --sidebar-width: 260px;
+            --success: #10b981;
         }
 
         * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            margin: 0; padding: 0; box-sizing: border-box;
             font-family: 'Cairo', sans-serif;
             user-select: none; /* منع تحديد النصوص */
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow-x: hidden;
-        }
-
-        /* حماية الشاشة - Watermark */
-        .watermark {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 9999;
-            opacity: 0.05;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            content: "INTERNAL USE ONLY";
-        }
-
-        /* شاشة الدخول */
-        #login-page {
+            background: #f1f5f9;
+            color: var(--primary);
             height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-        }
-
-        .login-card {
-            background: white;
-            padding: 2.5rem;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            width: 100%;
-            max-width: 400px;
-            text-align: center;
-        }
-
-        .login-card img { width: 100px; margin-bottom: 1rem; }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            outline: none;
-        }
-
-        button {
-            width: 100%;
-            padding: 12px;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: 0.3s;
-        }
-
-        button:hover { background: var(--secondary-color); }
-
-        /* لوحة التحكم الرئيسية */
-        #main-app { display: none; height: 100vh; flex-direction: row; }
-
-        /* الشريط الجانبي */
-        .sidebar {
-            width: var(--sidebar-width);
-            background: #111827;
-            color: white;
-            padding: 1.5rem;
-            transition: 0.3s;
-        }
-
-        .sidebar h2 { font-size: 1.2rem; margin-bottom: 2rem; border-bottom: 1px solid #374151; padding-bottom: 1rem; }
-
-        .nav-item {
-            padding: 12px;
-            margin-bottom: 5px;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            transition: 0.3s;
-        }
-
-        .nav-item i { margin-left: 10px; width: 20px; }
-        .nav-item:hover, .nav-item.active { background: var(--primary-color); }
-
-        /* المحتوى الرئيسي */
-        .content-area {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-        }
-
-        header {
-            background: white;
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            padding: 2rem;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            border-right: 5px solid var(--primary-color);
-        }
-
-        /* الجداول */
-        .table-container { padding: 0 2rem; overflow-x: auto; }
-        table {
-            width: 100%;
-            background: white;
-            border-collapse: collapse;
-            border-radius: 10px;
             overflow: hidden;
         }
 
-        th, td { padding: 15px; text-align: right; border-bottom: 1px solid #eee; }
-        th { background: #f1f5f9; }
-
-        /* المودال (الرسائل المنبثقة) */
-        .modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 10000;
+        /* حماية الشاشة بصمة مائية */
+        #screen-guard {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 9999; display: flex;
+            flex-wrap: wrap; opacity: 0.04; font-size: 12px;
         }
 
-        .modal-content {
-            background: white;
-            padding: 2rem;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 500px;
+        /* تصميم شاشة الدخول الرايق */
+        #login-screen {
+            height: 100vh;
+            background: radial-gradient(circle at top right, #1e3a8a, #0f172a);
+            display: flex; align-items: center; justify-content: center;
         }
 
-        /* إخفاء المحتوى عند محاولة أخذ لقطة شاشة */
-        @media print {
-            body { display: none !important; }
+        .login-box {
+            background: var(--glass);
+            padding: 40px; border-radius: 24px; width: 100%; max-width: 420px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3);
+            text-align: center; backdrop-filter: blur(10px);
         }
+
+        /* واجهة النظام الرئيسية */
+        #app-shell { display: none; height: 100vh; grid-template-columns: 260px 1fr; }
+
+        .sidebar {
+            background: var(--primary);
+            color: white; padding: 20px;
+            display: flex; flex-direction: column;
+        }
+
+        .main-content { overflow-y: auto; background: #f8fafc; }
+
+        header {
+            background: white; padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        /* البطاقات الإحصائية */
+        .dashboard-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px; padding: 30px;
+        }
+
+        .card {
+            background: white; padding: 25px; border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border-right: 4px solid var(--accent);
+        }
+
+        /* مدخلات وتنسيقات */
+        input, select {
+            width: 100%; padding: 12px; margin: 8px 0;
+            border: 1px solid #cbd5e1; border-radius: 10px; outline: none;
+        }
+
+        .btn {
+            padding: 12px 24px; border-radius: 10px; border: none;
+            cursor: pointer; font-weight: 600; transition: 0.3s;
+        }
+
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+
+        /* منع التصوير عن طريق التعتيم عند فقدان التركيز */
+        .blur-shield { filter: blur(15px); transition: 0.2s; }
     </style>
 </head>
-<body oncontextmenu="return false;" onkeydown="return disableInspector(event);">
+<body oncontextmenu="return false;">
 
-    <div class="watermark" id="watermark-bg"></div>
+    <div id="screen-guard"></div>
 
-    <section id="login-page">
-        <div class="login-card">
-            <i class="fas fa-user-shield fa-4x" style="color: var(--primary-color); margin-bottom: 1rem;"></i>
-            <h2 id="ui-org-name">نقابة تكنولوجيا المعلومات</h2>
-            <p style="margin-bottom: 2rem; color: #666;">نظام الإدارة المتكامل</p>
-            <input type="text" id="login-id" placeholder="البريد الإلكتروني أو رقم العضوية">
-            <input type="password" id="login-pass" placeholder="كلمة المرور">
-            <button onclick="auth.login()">دخول</button>
+    <section id="login-screen">
+        <div class="login-box">
+            <h2 style="margin-bottom: 10px;">ITWS PLATFORM</h2>
+            <p style="color: #64748b; margin-bottom: 30px;">نظام النقابة الإداري المتكامل</p>
+            <input type="text" id="user-mail" placeholder="البريد الإلكتروني أو رقم العضوية">
+            <input type="password" id="user-pass" placeholder="كلمة المرور">
+            <button class="btn btn-primary" style="width: 100%; margin-top: 15px;" onclick="handleLogin()">دخول آمن</button>
         </div>
     </section>
 
-    <main id="main-app">
+    <main id="app-shell">
         <aside class="sidebar">
-            <h2 id="sidebar-org-name">النقابة الذكية</h2>
-            <nav id="sidebar-nav">
+            <h3 style="color: var(--accent); margin-bottom: 30px;">لوحة التحكم</h3>
+            <nav id="menu-items">
                 </nav>
-            <div style="margin-top: auto; padding-top: 2rem;">
-                <button onclick="auth.logout()" style="background: var(--danger);">تسجيل خروج</button>
+            <div style="margin-top: auto;">
+                <button class="btn btn-danger" style="width: 100%;" onclick="location.reload()">تسجيل خروج</button>
             </div>
         </aside>
 
-        <section class="content-area">
+        <section class="main-content">
             <header>
-                <div id="user-info-header">
-                    <strong id="header-user-name">..</strong> 
-                    <span id="header-user-role" style="font-size: 0.8rem; color: #666;"></span>
-                </div>
-                <div id="current-time"></div>
+                <div id="user-tag"></div>
+                <div id="live-clock" style="font-weight: bold;"></div>
             </header>
-
-            <div id="dynamic-content">
+            <div id="page-content">
                 </div>
         </section>
     </main>
 
-    <div id="custom-alert" class="modal">
-        <div class="modal-content">
-            <h3 id="alert-title">تنبيه</h3>
-            <p id="alert-msg" style="margin: 1rem 0;"></p>
-            <button onclick="closeAlert()">حسناً</button>
-        </div>
-    </div>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, doc, getDoc, collection, query, where, getDocs, addDoc } 
+        from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <script>
-        // --- 1. قاعدة البيانات والبيانات الأولية ---
-        const DB = {
-            settings: JSON.parse(localStorage.getItem('nokaba_settings')) || {
-                orgName: "نقابة تكنولوجيا المعلومات",
-                primaryColor: "#1e3a8a",
-                memberStartNumber: 1
-            },
-            members: JSON.parse(localStorage.getItem('nokaba_members')) || [
-                {id: 1, memberId: "1", name: "النقيب العام", email: "boss@nokaba.com", password: "123456", role: "نقيب", entity: "الإدارة العليا"},
-                {id: 2, memberId: "2", name: "النائب الأول", email: "vp@nokaba.com", password: "123456", role: "نائب", entity: "الإدارة العليا"},
-                {id: 5, memberId: "5", name: "أمين الصندوق", email: "treasurer@nokaba.com", password: "123456", role: "أمين صندوق", entity: "المالية"}
-            ],
-            messages: JSON.parse(localStorage.getItem('nokaba_messages')) || []
+        // إعداداتك الخاصة
+        const firebaseConfig = {
+            apiKey: "AIzaSyBS9Bsaf69gnODAtO8f12YYCztcUtx6jRw",
+            authDomain: "itws-350c7.firebaseapp.com",
+            projectId: "itws-350c7",
+            storageBucket: "itws-350c7.firebasestorage.app",
+            messagingSenderId: "861778927307",
+            appId: "1:861778927307:web:d8ec29735353ee76a7454e"
         };
 
-        let currentUser = null;
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-        // --- 2. نظام الحماية ---
-        function disableInspector(e) {
-            // منع F12, Ctrl+Shift+I, Ctrl+U
-            if (e.keyCode == 123 || (e.ctrlKey && e.shiftKey && e.keyCode == 73) || (e.ctrlKey && e.keyCode == 85)) {
-                showAlert("⚠️ تنبيه أمني", "محاولة الوصول لأدوات المطور ممنوعة.");
-                return false;
-            }
-        }
+        // --- وظيفة الدخول والربط بـ Firestore ---
+        window.handleLogin = async () => {
+            const email = document.getElementById('user-mail').value;
+            const pass = document.getElementById('user-pass').value;
 
-        // منع تصوير الشاشة (حيلة تشويش عند فقدان التركيز)
-        window.onblur = function() {
-            document.body.style.filter = "blur(20px)";
-        };
-        window.onfocus = function() {
-            document.body.style.filter = "none";
-        };
+            try {
+                // البحث في كولكشن "members" بفايربيز
+                const q = query(collection(db, "members"), where("email", "==", email), where("password", "==", pass));
+                const querySnapshot = await getDocs(q);
 
-        // --- 3. نظام الجلسات (Auth) ---
-        const auth = {
-            login: () => {
-                const id = document.getElementById('login-id').value;
-                const pass = document.getElementById('login-pass').value;
-                
-                const user = DB.members.find(u => (u.email === id || u.memberId === id) && u.password === pass);
-                
-                if (user) {
-                    currentUser = user;
-                    document.getElementById('login-page').style.display = 'none';
-                    document.getElementById('main-app').style.display = 'flex';
-                    initDashboard();
+                if (!querySnapshot.empty) {
+                    const userData = querySnapshot.docs[0].data();
+                    startSystem(userData);
                 } else {
-                    showAlert("خطأ", "بيانات الدخول غير صحيحة");
+                    alert("بيانات الدخول غير صحيحة أو العضو غير موجود في قاعدة البيانات");
                 }
-            },
-            logout: () => {
-                location.reload();
+            } catch (e) {
+                console.error("Error: ", e);
+                alert("حدث خطأ في الاتصال بالقاعدة");
             }
         };
 
-        // --- 4. واجهة المستخدم والديناميكية ---
-        function initDashboard() {
-            document.getElementById('header-user-name').innerText = currentUser.name;
-            document.getElementById('header-user-role').innerText = currentUser.role;
-            renderSidebar();
-            renderStats();
-            createWatermark();
+        function startSystem(user) {
+            document.getElementById('login-screen').style.display = 'none';
+            document.getElementById('app-shell').style.display = 'grid';
+            document.getElementById('user-tag').innerHTML = `مرحباً: <b>${user.name}</b> [${user.role}]`;
+            
+            // تفعيل حماية الشاشة باسم المستخدم
+            initGuard(user.name);
+            renderDashboard();
         }
 
-        function renderSidebar() {
-            const nav = document.getElementById('sidebar-nav');
-            let menu = `
-                <div class="nav-item active" onclick="renderStats()"><i class="fas fa-chart-line"></i> الرئيسية</div>
-                <div class="nav-item" onclick="renderMessages()"><i class="fas fa-envelope"></i> المراسلات</div>
-            `;
-
-            if (currentUser.role === 'نقيب' || currentUser.role === 'نائب') {
-                menu += `<div class="nav-item" onclick="renderMembers()"><i class="fas fa-users"></i> الإدارة</div>`;
+        // --- نظام الحماية ضد السكرين شوت ---
+        function initGuard(name) {
+            const guard = document.getElementById('screen-guard');
+            for(let i=0; i<80; i++) {
+                const span = document.createElement('span');
+                span.style.padding = "20px";
+                span.innerText = name + " - " + new Date().toLocaleDateString();
+                guard.appendChild(span);
             }
-
-            if (currentUser.role === 'أمين صندوق') {
-                menu += `<div class="nav-item" onclick="renderFinance()"><i class="fas fa-money-bill-wave"></i> المالية</div>`;
-            }
-
-            nav.innerHTML = menu;
         }
 
-        function renderStats() {
-            const content = document.getElementById('dynamic-content');
+        // تعتيم الشاشة عند الخروج من المتصفح
+        window.onblur = () => document.body.classList.add('blur-shield');
+        window.onfocus = () => document.body.classList.remove('blur-shield');
+
+        // منع الاختصارات
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && (e.key === 'p' || e.key === 's' || e.key === 'u')) {
+                e.preventDefault();
+                alert("غير مسموح بهذا الإجراء للنظام");
+            }
+        });
+
+        // --- عرض الواجهة الرئيسية ---
+        function renderDashboard() {
+            const content = document.getElementById('page-content');
             content.innerHTML = `
-                <div class="stats-grid">
-                    <div class="stat-card"><h3>${DB.messages.length}</h3><p>إجمالي المعاملات</p></div>
-                    <div class="stat-card" style="border-color: var(--accent-color)"><h3>${DB.members.length}</h3><p>عدد الإداريين</p></div>
-                    <div class="stat-card" style="border-color: orange"><h3>0</h3><p>مأموريات معلقة</p></div>
+                <div class="dashboard-grid">
+                    <div class="card"><h3>0</h3><p>طلبات قيد الانتظار</p></div>
+                    <div class="card" style="border-color: var(--success)"><h3>0</h3><p>قرارات معتمدة</p></div>
+                    <div class="card" style="border-color: orange"><h3>0</h3><p>مأموريات مالية</p></div>
+                </div>
+                <div style="padding: 0 30px;">
+                    <div class="card" style="width: 100%;">
+                        <h4>آخر التنبيهات</h4>
+                        <p style="color: #666; margin-top: 10px;">لا توجد إشعارات جديدة حالياً.</p>
+                    </div>
                 </div>
             `;
         }
 
-        // --- 5. وظائف مساعدة ---
-        function showAlert(title, msg) {
-            document.getElementById('alert-title').innerText = title;
-            document.getElementById('alert-msg').innerText = msg;
-            document.getElementById('custom-alert').style.display = 'flex';
-        }
-
-        function closeAlert() {
-            document.getElementById('custom-alert').style.display = 'none';
-        }
-
-        function createWatermark() {
-            const wm = document.getElementById('watermark-bg');
-            wm.innerHTML = "";
-            for (let i = 0; i < 50; i++) {
-                wm.innerHTML += `<div>${currentUser.name} - ${currentUser.memberId}</div>`;
-            }
-        }
-
-        // تحديث الوقت
+        // تحديث الساعة
         setInterval(() => {
-            const now = new Date();
-            document.getElementById('current-time').innerText = now.toLocaleString('ar-EG');
+            document.getElementById('live-clock').innerText = new Date().toLocaleTimeString('ar-EG');
         }, 1000);
 
     </script>
